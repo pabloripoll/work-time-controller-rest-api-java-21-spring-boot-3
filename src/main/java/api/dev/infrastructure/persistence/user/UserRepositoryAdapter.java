@@ -1,10 +1,9 @@
-package api.dev.infrastructure.persistence.jpa.adapter;
+package api.dev.infrastructure.persistence.user;
 
 import api.dev.domain.shared.valueobject.Email;
 import api.dev.domain.user.model.entity.User;
 import api.dev.domain.user.repository.UserRepository;
-import api.dev.infrastructure.persistence.jpa.mapper.UserJpaMapper;
-import api.dev.infrastructure.persistence.repository.user.UserJpaRepository;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

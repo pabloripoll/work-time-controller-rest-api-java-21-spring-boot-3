@@ -1,9 +1,8 @@
-package api.dev.infrastructure.persistence.jpa.adapter;
+package api.dev.infrastructure.persistence.master;
 
 import api.dev.domain.master.model.entity.Master;
 import api.dev.domain.master.repository.MasterRepository;
-import api.dev.infrastructure.persistence.jpa.mapper.MasterJpaMapper;
-import api.dev.infrastructure.persistence.repository.master.MasterJpaRepository;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;

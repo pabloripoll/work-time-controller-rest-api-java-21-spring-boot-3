@@ -1,6 +1,5 @@
-package api.dev.infrastructure.persistence.repository.master;
+package api.dev.infrastructure.persistence.master;
 
-import api.dev.infrastructure.persistence.jpa.master.MasterJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

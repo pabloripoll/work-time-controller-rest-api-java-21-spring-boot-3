@@ -1,4 +1,4 @@
-package api.dev.infrastructure.persistence.jpa.master;
+package api.dev.infrastructure.persistence.master;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

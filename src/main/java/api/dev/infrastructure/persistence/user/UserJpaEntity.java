@@ -1,4 +1,4 @@
-package api.dev.infrastructure.persistence.jpa.user;
+package api.dev.infrastructure.persistence.user;
 
 import api.dev.domain.user.model.entity.UserRole;
 import jakarta.persistence.*;

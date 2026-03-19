@@ -1,6 +1,5 @@
-package api.dev.infrastructure.persistence.repository.user;
+package api.dev.infrastructure.persistence.user;
 
-import api.dev.infrastructure.persistence.jpa.user.UserJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

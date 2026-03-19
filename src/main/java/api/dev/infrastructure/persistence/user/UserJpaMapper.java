@@ -1,8 +1,7 @@
-package api.dev.infrastructure.persistence.jpa.mapper;
+package api.dev.infrastructure.persistence.user;
 
 import api.dev.domain.shared.valueobject.Email;
 import api.dev.domain.user.model.entity.User;
-import api.dev.infrastructure.persistence.jpa.user.UserJpaEntity;
 import org.springframework.stereotype.Component;
 
 @Component

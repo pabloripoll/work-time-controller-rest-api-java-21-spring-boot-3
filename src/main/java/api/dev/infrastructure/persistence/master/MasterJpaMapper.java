@@ -1,13 +1,12 @@
-package api.dev.infrastructure.persistence.jpa.mapper;
+package api.dev.infrastructure.persistence.master;
 
 import api.dev.domain.master.model.entity.Master;
 import api.dev.domain.master.model.entity.MasterAccessLog;
 import api.dev.domain.master.model.entity.MasterProfile;
 import api.dev.domain.user.model.entity.User;
-import api.dev.infrastructure.persistence.jpa.master.MasterAccessLogJpaEntity;
-import api.dev.infrastructure.persistence.jpa.master.MasterJpaEntity;
-import api.dev.infrastructure.persistence.jpa.master.MasterProfileJpaEntity;
-import api.dev.infrastructure.persistence.repository.user.UserJpaRepository;
+import api.dev.infrastructure.persistence.user.UserJpaRepository;
+import api.dev.infrastructure.persistence.user.UserJpaMapper;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

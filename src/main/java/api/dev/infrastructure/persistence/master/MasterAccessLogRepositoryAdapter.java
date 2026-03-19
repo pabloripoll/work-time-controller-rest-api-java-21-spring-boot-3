@@ -1,9 +1,8 @@
-package api.dev.infrastructure.persistence.jpa.adapter;
+package api.dev.infrastructure.persistence.master;
 
 import api.dev.domain.master.model.entity.MasterAccessLog;
 import api.dev.domain.master.repository.MasterAccessLogRepository;
-import api.dev.infrastructure.persistence.jpa.mapper.MasterJpaMapper;
-import api.dev.infrastructure.persistence.repository.master.MasterAccessLogJpaRepository;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
