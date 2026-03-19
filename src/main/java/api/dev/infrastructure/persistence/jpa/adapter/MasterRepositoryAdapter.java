@@ -6,7 +6,6 @@ import api.dev.infrastructure.persistence.jpa.mapper.MasterJpaMapper;
 import api.dev.infrastructure.persistence.repository.master.MasterJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -24,14 +23,14 @@ public class MasterRepositoryAdapter implements MasterRepository {
     }
 
     @Override
-    public Master save(@NonNull Master master) {
+    public Master save(Master master) {
         var entity = Objects.requireNonNull(mapper.toJpa(master), "MasterJpaEntity must not be null");
         var saved  = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
 
     @Override
-    public Optional<Master> findById(@NonNull Long id) {
+    public Optional<Master> findById(Long id) {
         Objects.requireNonNull(id, "Master id must not be null");
         return jpaRepository.findById(id).map(mapper::toDomain);
     }

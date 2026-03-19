@@ -7,6 +7,7 @@ import api.dev.infrastructure.persistence.repository.master.MasterAccessLogJpaRe
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -23,8 +24,11 @@ public class MasterAccessLogRepositoryAdapter implements MasterAccessLogReposito
 
     @Override
     public MasterAccessLog save(MasterAccessLog log) {
-        var entity = mapper.toJpa(log);
+        Objects.requireNonNull(log, "MasterAccessLog must not be null");
+
+        var entity = Objects.requireNonNull(mapper.toJpa(log), "MasterAccessLogJpaEntity must not be null");
         var saved  = jpaRepository.save(entity);
+
         return mapper.toDomain(saved);
     }
 

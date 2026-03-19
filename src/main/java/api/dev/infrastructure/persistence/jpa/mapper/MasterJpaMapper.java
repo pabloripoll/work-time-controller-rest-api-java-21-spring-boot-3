@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class MasterJpaMapper {
@@ -36,9 +37,10 @@ public class MasterJpaMapper {
     // ------------------------------------------------------------------ //
 
     public Master toDomain(MasterJpaEntity entity) {
-        var userJpaEntity = userJpaRepository.findById(entity.getUserId())
+        Long userId = Objects.requireNonNull(entity.getUserId(), "Master userId must not be null");
+        var userJpaEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "User not found for master userId: " + entity.getUserId()));
+                        "User not found for master userId: " + userId));
 
         User user = userJpaMapper.toDomain(userJpaEntity);
 
@@ -104,13 +106,13 @@ public class MasterJpaMapper {
     // ------------------------------------------------------------------ //
 
     public MasterAccessLog toDomain(MasterAccessLogJpaEntity entity) {
-        var userJpaEntity = userJpaRepository.findById(entity.getUserId())
+        Long userId = Objects.requireNonNull(entity.getUserId(), "AccessLog userId must not be null");
+        var userJpaEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "User not found for access log userId: " + entity.getUserId()));
+                        "User not found for access log userId: " + userId));
 
         User user = userJpaMapper.toDomain(userJpaEntity);
 
-        // DB stores payload as JSON String → deserialize to Map
         Map<String, Object> payload = jsonToMap(entity.getPayload());
 
         return MasterAccessLog.reconstitute(
@@ -141,7 +143,7 @@ public class MasterJpaMapper {
         entity.setIpAddress(log.getIpAddress());
         entity.setUserAgent(log.getUserAgent());
         entity.setRequestsCount(log.getRequestsCount());
-        entity.setPayload(mapToJson(log.getPayload()));   // Map → JSON String for DB
+        entity.setPayload(mapToJson(log.getPayload()));
         entity.setToken(log.getToken());
         entity.setCreatedAt(log.getCreatedAt() != null ? log.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
@@ -149,7 +151,7 @@ public class MasterJpaMapper {
     }
 
     // ------------------------------------------------------------------ //
-    // JSON helpers (payload column is TEXT/JSON in DB, Map in domain)
+    // JSON helpers
     // ------------------------------------------------------------------ //
 
     private Map<String, Object> jsonToMap(String json) {

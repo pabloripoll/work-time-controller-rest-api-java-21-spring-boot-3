@@ -8,6 +8,7 @@ import api.dev.infrastructure.persistence.repository.user.UserJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.Objects;
 
 @Component
 public class UserRepositoryAdapter implements UserRepository {
@@ -22,21 +23,28 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public User save(User user) {
-        var entity = mapper.toJpa(user);
+        Objects.requireNonNull(user, "User must not be null");
+
+        var entity = Objects.requireNonNull(mapper.toJpa(user), "UserJpaEntity must not be null");
         var saved  = jpaRepository.save(entity);
+
         // Sync the DB-generated ID back to the domain entity
         user.setId(saved.getId());
+
         return mapper.toDomain(saved);
     }
 
     @Override
     public Optional<User> findById(Long id) {
+        Objects.requireNonNull(id, "User id must not be null");
+
         return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public Optional<User> findByEmail(Email email) {
-        // UserJpaRepository works with String — extract the raw value from the record
+        Objects.requireNonNull(email, "Email must not be null");
+
         return jpaRepository.findByEmail(email.value()).map(mapper::toDomain);
     }
 }
