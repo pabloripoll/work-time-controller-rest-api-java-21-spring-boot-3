@@ -118,7 +118,7 @@ Main or latest API version that nginx proxy to app.jar file running on port 8080
 /var/www $ supervisorctl start java-jar
 ```
 
-Local development version on port 8081 - `$ mvn spring-boot:run` - use make apirest-info to discover docker assigned port
+Local development version on port 8081 - `$ mvn spring-boot:run` - use `$ make apirest-info` to discover docker assigned port
 ```bash
 /var/www $ supervisorctl start java-dev
 ```

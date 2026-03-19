@@ -7,7 +7,6 @@ import api.dev.domain.shared.valueobject.Email;
 import api.dev.domain.user.model.entity.User;
 import api.dev.domain.user.repository.UserRepository;
 import api.dev.domain.user.service.PasswordHashingService;
-
 import net.datafaker.Faker;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -33,19 +32,20 @@ public class UserMasterSeeder {
         this.faker            = new Faker();
     }
 
-    /** Called by DatabaseSeeder — not a CommandLineRunner itself */
     public void seed() {
         String nickname           = faker.name().firstName();
         String normalizedNickname = sanitizeForEmail(nickname);
-        String emailString        = "master@webmaster.com";
 
-        Email email = Email.fromString(emailString);
+        // Email is a record — use new Email(string), not Email.fromString()
+        Email email = new Email("master@webmaster.com");
 
         Optional<User> existingUser = userRepository.findByEmail(email);
 
         User user;
         if (existingUser.isEmpty()) {
-            user = User.createMaster(null, email, "temp", normalizedNickname, 1L);
+            // User.createMaster signature: (Long id, Email email, String password, Long createdByUserId)
+            // — no nickname parameter in this factory method
+            user = User.createMaster(null, email, "temp", 1L);
             user.updatePassword(passwordHasher.hashPassword("Pass12B4?"));
             user = userRepository.save(user);
         } else {
@@ -55,16 +55,16 @@ public class UserMasterSeeder {
         Optional<Master> existingMaster = masterRepository.findByUserId(user.getId());
 
         if (existingMaster.isEmpty()) {
-            Master master    = Master.create(user.getId(), true, false);
-            MasterProfile profile = MasterProfile.create(nickname);
-            master.setProfile(profile);
+            // Master.create signature: (User user) — not (Long, boolean, boolean)
+            Master master = Master.create(user);
+            master.setProfile(MasterProfile.create(normalizedNickname));
             masterRepository.save(master);
         }
     }
 
     private String sanitizeForEmail(String input) {
         if (input == null) return "";
-        String normalized   = Normalizer.normalize(input, Normalizer.Form.NFD);
+        String normalized     = Normalizer.normalize(input, Normalizer.Form.NFD);
         String withoutAccents = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         return withoutAccents.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
     }

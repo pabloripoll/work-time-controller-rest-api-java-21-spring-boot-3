@@ -1,28 +1,34 @@
 package api.dev.infrastructure.persistence.jpa.mapper;
 
-import api.dev.domain.user.model.entity.User;
-import api.dev.infrastructure.persistence.jpa.user.UserJpaEntity;
-import api.dev.infrastructure.persistence.repository.user.UserJpaRepository;
 import api.dev.domain.master.model.entity.Master;
 import api.dev.domain.master.model.entity.MasterAccessLog;
 import api.dev.domain.master.model.entity.MasterProfile;
+import api.dev.domain.user.model.entity.User;
 import api.dev.infrastructure.persistence.jpa.master.MasterAccessLogJpaEntity;
 import api.dev.infrastructure.persistence.jpa.master.MasterJpaEntity;
 import api.dev.infrastructure.persistence.jpa.master.MasterProfileJpaEntity;
-
+import api.dev.infrastructure.persistence.repository.user.UserJpaRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Component
 public class MasterJpaMapper {
 
     private final UserJpaRepository userJpaRepository;
     private final UserJpaMapper userJpaMapper;
+    private final ObjectMapper objectMapper;
 
-    public MasterJpaMapper(UserJpaRepository userJpaRepository, UserJpaMapper userJpaMapper) {
+    public MasterJpaMapper(UserJpaRepository userJpaRepository,
+                           UserJpaMapper userJpaMapper,
+                           ObjectMapper objectMapper) {
         this.userJpaRepository = userJpaRepository;
         this.userJpaMapper     = userJpaMapper;
+        this.objectMapper      = objectMapper;
     }
 
     // ------------------------------------------------------------------ //
@@ -30,9 +36,9 @@ public class MasterJpaMapper {
     // ------------------------------------------------------------------ //
 
     public Master toDomain(MasterJpaEntity entity) {
-         UserJpaEntity userJpaEntity = userJpaRepository.findById(entity.getId())
+        var userJpaEntity = userJpaRepository.findById(entity.getUserId())
                 .orElseThrow(() -> new IllegalStateException(
-                        "User not found for master userId: " + entity.getId()));
+                        "User not found for master userId: " + entity.getUserId()));
 
         User user = userJpaMapper.toDomain(userJpaEntity);
 
@@ -90,7 +96,6 @@ public class MasterJpaMapper {
         entity.setAvatar(profile.getAvatar());
         entity.setCreatedAt(profile.getCreatedAt() != null ? profile.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
-
         return entity;
     }
 
@@ -99,10 +104,14 @@ public class MasterJpaMapper {
     // ------------------------------------------------------------------ //
 
     public MasterAccessLog toDomain(MasterAccessLogJpaEntity entity) {
-        UserJpaEntity userJpaEntity = userJpaRepository.findById(entity.getUserId())
-                .orElseThrow(() -> new IllegalStateException("User not found for access log userId: " + entity.getUserId()));
+        var userJpaEntity = userJpaRepository.findById(entity.getUserId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "User not found for access log userId: " + entity.getUserId()));
 
         User user = userJpaMapper.toDomain(userJpaEntity);
+
+        // DB stores payload as JSON String → deserialize to Map
+        Map<String, Object> payload = jsonToMap(entity.getPayload());
 
         return MasterAccessLog.reconstitute(
                 entity.getId(),
@@ -111,7 +120,7 @@ public class MasterJpaMapper {
                 entity.getExpiresAt(),
                 entity.getIpAddress(),
                 entity.getUserAgent(),
-                entity.getPayload(),
+                payload,
                 entity.isTerminated(),
                 entity.isExpired(),
                 entity.getRefreshCount(),
@@ -132,11 +141,32 @@ public class MasterJpaMapper {
         entity.setIpAddress(log.getIpAddress());
         entity.setUserAgent(log.getUserAgent());
         entity.setRequestsCount(log.getRequestsCount());
-        entity.setPayload(log.getPayload());
+        entity.setPayload(mapToJson(log.getPayload()));   // Map → JSON String for DB
         entity.setToken(log.getToken());
         entity.setCreatedAt(log.getCreatedAt() != null ? log.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
-
         return entity;
+    }
+
+    // ------------------------------------------------------------------ //
+    // JSON helpers (payload column is TEXT/JSON in DB, Map in domain)
+    // ------------------------------------------------------------------ //
+
+    private Map<String, Object> jsonToMap(String json) {
+        if (json == null || json.isBlank()) return null;
+        try {
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Failed to deserialize payload JSON: " + json, e);
+        }
+    }
+
+    private String mapToJson(Map<String, Object> map) {
+        if (map == null) return null;
+        try {
+            return objectMapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Failed to serialize payload map", e);
+        }
     }
 }

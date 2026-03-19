@@ -26,6 +26,11 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
     <!-- Thymeleaf for HTML rendering -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -98,14 +103,15 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
-  </dependencies>
 
-  <!-- Database seeding -->
-  <dependency>
-    <groupId>net.datafaker</groupId>
-    <artifactId>datafaker</artifactId>
-    <version>2.0.2</version>
-  </dependency>
+    <!-- Database seeding / Faker -->
+    <dependency>
+      <groupId>net.datafaker</groupId>
+      <artifactId>datafaker</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+
+  </dependencies>
 
   <build>
     <plugins>

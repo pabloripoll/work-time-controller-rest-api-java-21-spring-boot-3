@@ -31,17 +31,17 @@ public class CreateMasterUseCase {
     }
 
     public MasterDto execute(CreateMasterCommand command) {
-        Email email = Email.fromString(command.email());
+        Email email = new Email(command.email());
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new ValidationException("Email already in use: " + command.email());
         }
 
+        // User.createMaster signature: (Long id, Email email, String password, Long createdByUserId)
         User user = User.createMaster(
                 null,
                 email,
                 passwordHasher.hashPassword(command.password()),
-                command.nickname(),
                 command.createdByUserId()
         );
         user = userRepository.save(user);

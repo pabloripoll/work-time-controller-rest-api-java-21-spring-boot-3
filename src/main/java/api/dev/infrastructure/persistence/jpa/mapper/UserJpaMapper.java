@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 public class UserJpaMapper {
 
     public User toDomain(UserJpaEntity entity) {
-        return User.reconstitute(
+        return new User(
                 entity.getId(),
                 new Email(entity.getEmail()),
                 entity.getPassword(),
                 entity.getRole(),
+                entity.getCreatedByUserId(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
-                entity.getDeletedAt(),
-                entity.getCreatedByUserId()
+                entity.getDeletedAt()
         );
     }
 
