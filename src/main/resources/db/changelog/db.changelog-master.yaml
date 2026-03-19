@@ -1,0 +1,208 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250101103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250101103030__create_users_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250102103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250102103030__create_locations_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250103103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250103103030__create_masters_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250103103031
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250103103031__create_master_access_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250103103032
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250103103032__create_master_profile_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250104103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250104103030__create_admins_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250104103031
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250104103031__create_admin_access_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250104103033
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250104103033__create_admin_profile_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250105103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250105103030__create_office_departments_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250105103031
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250105103031__create_office_jobs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103030__create_employees_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103031
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103031__create_employee_access_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103032
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103032__create_employee_workplace_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103033
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103033__create_employee_location_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103034
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103034__create_employee_profile_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250106103035
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250106103035__create_employee_contacts_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103030
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103030__create_employment_contract_types_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103031
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103031__create_employment_contracts_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103032
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103032__create_employment_contracts_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103033
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103033__create_employment_workdays_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103034
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103034__create_employment_workdays_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103035
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103035__create_employment_workday_clockings_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'
+  - changeSet:
+      id: 20250107103036
+      author: developer
+      changes:
+        - sqlFile:
+            path: db/migrations/20250107103036__create_employment_workday_clockings_logs_table.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            endDelimiter: ';'

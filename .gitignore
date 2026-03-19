@@ -1,0 +1,92 @@
+# Maven / Java
+/target/
+/dependency-reduced-pom.xml
+/buildNumber.properties
+/release.properties
+/assembly/
+
+# Eclipse
+/.classpath
+/.project
+/.settings/
+/.metadata/
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+/*.iws
+/out/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+
+# Gradle (if present)
+.gradle/
+build/
+
+# Common artifacts
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Logs and reports
+*.log
+logs/
+*.log.*
+/surefire-reports/
+/failsafe-reports/
+/test-output/
+/junit-report/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editor folders
+.vscode/
+*.swp
+*~.nib
+*.sublime-workspace
+*.sublime-project
+
+# Temporary / cache
+tmp/
+temp/
+.cache/
+
+# Java keystores / credentials
+*.jks
+*.keystore
+*.p12
+.env
+secrets.*
+credentials.*
+
+# Spring / runtime
+spring.log
+*.pid
+
+# Generated sources (IDE/tooling)
+generated/
+generated-sources/
+.recommenders/
+
+# Maven wrapper (keep the wrapper script/jar committed; ignore wrapper logs if any)
+.mvn/wrapper/maven-wrapper.log
+
+# OS-specific thumbnails, indexing
+ehthumbs.db
+Icon?
+
+# Custom
+/vault

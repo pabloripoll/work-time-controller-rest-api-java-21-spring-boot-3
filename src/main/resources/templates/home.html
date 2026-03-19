@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Java Springboot 3 - HTML</title>
+    <link rel="icon" type="image/x-icon" href="/files/images/spring-boot.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Java Springboot 3 - HTML">
+    <style>
+    :root {
+        color-scheme: light dark;
+        --light-bg: ghostwhite;
+        --light-color: darkslategray;
+        --light-code: rgb(119, 188, 31);
+        --dark-bg: rgb(30, 30, 30);
+        --dark-color: ghostwhite;
+        --dark-code: rgb(119, 188, 31);
+    }
+    * {
+        background-color: light-dark(var(--light-bg), var(--dark-bg));
+        color: light-dark(var(--light-color), var(--dark-color));
+    }
+    body {
+        display: inline-block;
+        margin: 0px 5%;
+        text-align: center;
+        width: 90%;
+    }
+    span {
+        color: light-dark(var(--light-code), var(--dark-code));
+    }
+    .logo-wrapper {
+        width: 550px; height: auto; margin: 40px auto 10px auto;
+    }
+    .logo {
+        width: 250px; height: auto; float: left;
+    }
+    .logo-wrapper .logo:first-child {
+        margin-right: 25px;
+    }
+    .spring-logo img {
+        width:230px;
+    }
+    .springboot-logo img {
+        width:250px;
+    }
+    </style>
+</head>
+<body>
+    <div class="logo-wrapper">
+        <div class="logo spring-logo">
+            <img src="/files/images/spring.svg" alt="Spring Logo">
+        </div>
+        <div class="logo springboot-logo">
+            <img src="/files/images/spring-boot.svg" alt="SpringBoot Logo">
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+    <header>
+        <h1>PLATFORM <span>REST API</span> - Java 17 <span>Spring / SpringBoot</span></h1>
+    </header>
+    <p>Container is running succesfully - Plain <span>HTML5</span> is served as welcome page at the root of this site <code>/</code>.</p>
+    <p>For API requests check: <code>GET /api/health</code> endpoint.</p>
+    <p>Checking API services: <code>GET /api/services/check</code> endpoint.</p>
+    <p th:if="${res.status} == 'ok'">
+        Application status: <span>Success!</span> - <span style="color:yellow;" th:text="${res.message}"></span>
+    </p>
+    <p th:if="${res.status} == 'error'">
+        Application status: <span style="color:red;" th:text="${res.message}"></span>
+    </p>
+</body>
+</html>

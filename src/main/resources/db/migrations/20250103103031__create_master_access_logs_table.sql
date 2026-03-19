@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS "master_access_logs" (
+	"id" BIGSERIAL NOT NULL,
+	"user_id" BIGINT NOT NULL,
+	"is_terminated" BOOLEAN NOT NULL DEFAULT false,
+	"is_expired" BOOLEAN NOT NULL DEFAULT false,
+	"expires_at" TIMESTAMP NOT NULL,
+	"refresh_count" INTEGER NOT NULL DEFAULT 0,
+	"created_at" TIMESTAMP NOT NULL,
+	"updated_at" TIMESTAMP NOT NULL,
+	"ip_address" VARCHAR(45) NULL DEFAULT NULL::character varying,
+	"user_agent" TEXT NULL DEFAULT NULL,
+	"requests_count" INTEGER NOT NULL DEFAULT 0,
+	"payload" JSON NULL DEFAULT NULL,
+	"token" TEXT NOT NULL,
+	PRIMARY KEY ("id"),
+	CONSTRAINT "fk_master_access_logs_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_master_access_logs_user_id ON "master_access_logs" ("user_id");
+CREATE INDEX IF NOT EXISTS idx_master_access_logs_expires_at ON "master_access_logs" ("expires_at");
+CREATE INDEX IF NOT EXISTS idx_master_access_logs_token ON "master_access_logs" ("token");
