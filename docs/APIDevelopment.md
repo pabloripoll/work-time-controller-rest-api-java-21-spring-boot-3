@@ -163,22 +163,33 @@ In the professional Java world, spring-boot:start and spring-boot:stop are almos
 ```bash
 /var/www $ mvn liquibase:update
 ```
+<br><br>
 
 ## Seeders
 
-The command to run the seeder is:
+### Seed by command
+
+The command to run the seeder *(only if supervisord is not running the app)* is:
 ```bash
-$ mvn spring-boot:run -Dspring-boot.run.arguments=--seed -Dspring-boot.run.profiles=local
+$ mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.arguments=--seed
 ```
 
-The -Dspring-boot.run.profiles=local activates the @Profile({"dev", "local"}) on DatabaseSeeder and UserMasterSeeder. Without it, Spring won't load those beans and nothing runs.
+The `-Dspring-boot.run.profiles=dev` activates the @Profile({"dev", "local"}) on DatabaseSeeder and UserMasterSeeder. Without it, Spring won't load those beans and nothing runs.
 
-Summary — three ways to seed
+#### Summary — three ways to seed
 
-Command	                                                                                Profile     What runs
-mvn spring-boot:run -Dspring-boot.run.arguments=--seed -Dspring-boot.run.profiles=local	local	    DatabaseSeeder → masterSeeder.seed() → exits
-mvn spring-boot:run -Dspring-boot.run.profiles=local	                                local       App starts normally, no seeding
-mvn test                                                                                test	    BaseIntegrationTest.setupDatabase() → masterSeeder.seed() directly
+- Command: `$ mvn spring-boot:run -Dspring-boot.run.arguments=--seed -Dspring-boot.run.profiles=dev`
+    - Profile Env.: development
+    - What runs: DatabaseSeeder → masterSeeder.seed() → exits
+
+- Command: `$ mvn spring-boot:run -Dspring-boot.run.profiles=dev`
+    - Profile Env.: development
+    - What runs: App starts normally, no seeding
+
+- Command: `$ mvn test`
+    - Profile Env.: test
+    - What runs: BaseIntegrationTest.setupDatabase() → masterSeeder.seed() directly
+<br><br>
 
 ## Create the Application / REST API
 

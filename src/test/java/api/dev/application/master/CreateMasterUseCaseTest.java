@@ -49,8 +49,14 @@ class CreateMasterUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        savedUser = new User(1L, new Email("master@test.com"), "hashed",
-                UserRole.MASTER, 1L, LocalDateTime.now(), LocalDateTime.now(), null);
+        savedUser = new User(
+            1L,
+            new Email("master@webmaster.com"),
+            "hashed",
+            UserRole.MASTER,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            null);
 
         savedMaster = Master.create(savedUser);
         savedMaster.setId(1L);
@@ -60,12 +66,16 @@ class CreateMasterUseCaseTest {
     @DisplayName("execute() creates user, master and profile when email is new")
     void execute_createsSuccessfully() {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
+
         when(passwordHasher.hashPassword("Password1!")).thenReturn("hashed");
+
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
         when(masterRepository.save(any(Master.class))).thenReturn(savedMaster);
+
         when(mapper.toDto(any(Master.class))).thenReturn(null); // DTO shape not under test here
 
-        useCase.execute(new CreateMasterCommand("master@test.com", "Password1!", "pablo", 1L));
+        useCase.execute(new CreateMasterCommand("master@webmaster.com", "Password1!", "master"));
 
         verify(userRepository).save(any(User.class));
         verify(masterRepository).save(any(Master.class));
@@ -78,7 +88,7 @@ class CreateMasterUseCaseTest {
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.of(savedUser));
 
         assertThatThrownBy(() ->
-                useCase.execute(new CreateMasterCommand("master@test.com", "Password1!", "pablo", 1L))
+                useCase.execute(new CreateMasterCommand("master@webmaster.com", "Password1!", "master"))
         )
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Email already in use");

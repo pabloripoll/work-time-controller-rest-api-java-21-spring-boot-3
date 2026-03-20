@@ -13,7 +13,6 @@ public class UserJpaMapper {
                 new Email(entity.getEmail()),
                 entity.getPassword(),
                 entity.getRole(),
-                entity.getCreatedByUserId(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.getDeletedAt()
@@ -29,7 +28,6 @@ public class UserJpaMapper {
         entity.setCreatedAt(user.getCreatedAt());
         entity.setUpdatedAt(user.getUpdatedAt());
         entity.setDeletedAt(user.getDeletedAt());
-        entity.setCreatedByUserId(user.getCreatedByUserId());
 
         return entity;
     }

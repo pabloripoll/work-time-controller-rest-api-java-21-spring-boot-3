@@ -50,7 +50,6 @@ class MasterAuthControllerTest {
         userJpaEntity.setEmail("master@webmaster.com");
         userJpaEntity.setPassword(HASHED_PASSWORD);
         userJpaEntity.setRole(UserRole.MASTER);
-        userJpaEntity.setCreatedByUserId(1L);
         userJpaEntity.setCreatedAt(LocalDateTime.now());
         userJpaEntity.setUpdatedAt(LocalDateTime.now());
 

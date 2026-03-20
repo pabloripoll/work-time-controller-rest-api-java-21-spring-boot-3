@@ -23,8 +23,14 @@ class MasterTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(1L, new Email("master@test.com"), "hashed", UserRole.MASTER, 1L,
-                LocalDateTime.now(), LocalDateTime.now(), null);
+        user = new User(
+            1L,
+            new Email("master@test.com"),
+            "hashed",
+            UserRole.MASTER,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            null);
     }
 
     @Test

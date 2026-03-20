@@ -41,8 +41,7 @@ public class CreateMasterUseCase {
         User user = User.createMaster(
                 null,
                 email,
-                passwordHasher.hashPassword(command.password()),
-                command.createdByUserId()
+                passwordHasher.hashPassword(command.password())
         );
         user = userRepository.save(user);
 

@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"created_at" TIMESTAMP NOT NULL,
 	"updated_at" TIMESTAMP NULL DEFAULT NULL::timestamp without time zone,
 	"deleted_at" TIMESTAMP NULL DEFAULT NULL::timestamp without time zone,
-	"created_by_user_id" BIGINT NOT NULL,
 	PRIMARY KEY ("id"),
 	UNIQUE ("email")
 );

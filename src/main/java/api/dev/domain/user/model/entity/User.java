@@ -9,30 +9,33 @@ public class User {
     private Email email;
     private String password;
     private UserRole role;
-    private Long createdByUserId;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
     // Private constructor enforces the use of static factory methods
-    private User(Long id, Email email, String password, UserRole role, Long createdByUserId) {
+    private User(Long id, Email email, String password, UserRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.createdByUserId = createdByUserId;
         this.createdAt = LocalDateTime.now();
     }
 
     // Constructor for recreating the entity from the Database (via Repository/Mapper)
-    public User(Long id, Email email, String password, UserRole role, Long createdByUserId,
-                LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    public User(
+            Long id,
+            Email email,
+            String password,
+            UserRole role,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt
+    ) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.createdByUserId = createdByUserId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -40,16 +43,16 @@ public class User {
 
     // --- STATIC FACTORIES (BUSINESS METHODS) ---
 
-    public static User createMaster(Long id, Email email, String password, Long createdByUserId) {
-        return new User(id, email, password, UserRole.MASTER, createdByUserId);
+    public static User createMaster(Long id, Email email, String password) {
+        return new User(id, email, password, UserRole.MASTER);
     }
 
-    public static User createAdmin(Long id, Email email, String password, Long createdByUserId) {
-        return new User(id, email, password, UserRole.ADMIN, createdByUserId);
+    public static User createAdmin(Long id, Email email, String password) {
+        return new User(id, email, password, UserRole.ADMIN);
     }
 
-    public static User createEmployee(Long id, Email email, String password, Long createdByUserId) {
-        return new User(id, email, password, UserRole.EMPLOYEE, createdByUserId);
+    public static User createEmployee(Long id, Email email, String password) {
+        return new User(id, email, password, UserRole.EMPLOYEE);
     }
 
     // --- BUSINESS ACTIONS ---
@@ -107,8 +110,6 @@ public class User {
     public String getPassword() { return password; }
 
     public UserRole getRole() { return role; }
-
-    public Long getCreatedByUserId() { return createdByUserId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 

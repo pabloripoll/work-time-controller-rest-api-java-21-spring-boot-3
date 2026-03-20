@@ -55,15 +55,29 @@ class MasterAccountControllerTest {
         LocalDateTime now = LocalDateTime.now();
 
         // --- Master user ---
-        var masterDomainUser = new User(1L, new Email("master@test.com"), "hashed",
-                UserRole.MASTER, 1L, now, now, null);
+        var masterDomainUser = new User(
+            1L,
+            new Email("master@test.com"),
+            "hashed",
+            UserRole.MASTER,
+            now,
+            now,
+            null
+        );
         var masterAuth = new AuthenticatedUser(masterDomainUser);
         validMasterToken = jwtService.generateToken("master@test.com", "MASTER");
         when(userDetailsService.loadUserByUsername("master@test.com")).thenReturn(masterAuth);
 
         // --- Employee user (for 403 test) ---
-        var employeeDomainUser = new User(2L, new Email("emp@test.com"), "hashed",
-                UserRole.EMPLOYEE, 1L, now, now, null);
+        var employeeDomainUser = new User(
+            2L,
+            new Email("emp@test.com"),
+            "hashed",
+            UserRole.EMPLOYEE,
+            now,
+            now,
+            null
+        );
         var employeeAuth = new AuthenticatedUser(employeeDomainUser);
         validEmployeeToken = jwtService.generateToken("emp@test.com", "EMPLOYEE");
         when(userDetailsService.loadUserByUsername("emp@test.com")).thenReturn(employeeAuth);

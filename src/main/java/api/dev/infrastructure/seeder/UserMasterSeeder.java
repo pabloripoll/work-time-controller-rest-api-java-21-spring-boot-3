@@ -45,7 +45,7 @@ public class UserMasterSeeder {
         if (existingUser.isEmpty()) {
             // User.createMaster signature: (Long id, Email email, String password, Long createdByUserId)
             // — no nickname parameter in this factory method
-            user = User.createMaster(null, email, "temp", 1L);
+            user = User.createMaster(null, email, "temp");
             user.updatePassword(passwordHasher.hashPassword("Pass12B4?"));
             user = userRepository.save(user);
         } else {
@@ -66,6 +66,7 @@ public class UserMasterSeeder {
         if (input == null) return "";
         String normalized     = Normalizer.normalize(input, Normalizer.Form.NFD);
         String withoutAccents = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
         return withoutAccents.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
     }
 }

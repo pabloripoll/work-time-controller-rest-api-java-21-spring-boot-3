@@ -23,9 +23,6 @@ public class UserJpaEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "created_by_user_id", nullable = false)
-    private Long createdByUserId;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,10 +58,6 @@ public class UserJpaEntity {
 
     public void setPassword(String password) { this.password = password; }
 
-    public Long getCreatedByUserId() { return createdByUserId; }
-
-    public void setCreatedByUserId(Long createdByUserId) { this.createdByUserId = createdByUserId; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -78,7 +71,6 @@ public class UserJpaEntity {
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
 
     // --- HOOKS (Lifecycle Callbacks) ---
-    // This is the exact equivalent of Symfony's #[ORM\PrePersist] and #[ORM\PreUpdate]
 
     @PrePersist
     protected void onCreate() {
