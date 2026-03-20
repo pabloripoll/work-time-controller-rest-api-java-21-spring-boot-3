@@ -167,7 +167,7 @@ In the professional Java world, spring-boot:start and spring-boot:stop are almos
 
 ## Seeders
 
-### Seed by command
+### Option 1: Seed by command
 
 The command to run the seeder *(only if supervisord is not running the app)* is:
 ```bash
@@ -189,6 +189,10 @@ The `-Dspring-boot.run.profiles=dev` activates the @Profile({"dev", "local"}) on
 - Command: `$ mvn test`
     - Profile Env.: test
     - What runs: BaseIntegrationTest.setupDatabase() → masterSeeder.seed() directly
+
+### Option 2 — Separate Maven exec profile (cleanest CLI approach)
+
+Add a dedicated exec profile to pom.xml that runs a standalone main() in a separate process — no port conflict with the running app:
 <br><br>
 
 ## Create the Application / REST API

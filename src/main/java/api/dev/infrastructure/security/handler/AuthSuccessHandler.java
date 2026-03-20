@@ -57,7 +57,6 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
             );
             masterAccessLogRepository.save(log);
         }
-        // TODO: add adminAccessLogRepository, employeeAccessLogRepository when implemented
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);

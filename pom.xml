@@ -180,4 +180,34 @@
       </resource>
     </resources>
   </build>
+  <profiles>
+    <profile>
+      <id>seed</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <configuration>
+              <mainClass>api.dev.infrastructure.seeder.SeederMain</mainClass>
+              <arguments>
+                <argument>--seed</argument>
+              </arguments>
+              <systemProperties>
+                <systemProperty>
+                  <key>spring.profiles.active</key>
+                  <value>dev</value>
+                </systemProperty>
+                <systemProperty>
+                  <key>spring.main.web-application-type</key>
+                  <value>none</value>
+                </systemProperty>
+              </systemProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
