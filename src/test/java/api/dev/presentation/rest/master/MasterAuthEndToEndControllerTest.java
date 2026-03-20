@@ -1,41 +1,75 @@
 package api.dev.presentation.rest.master;
 
+import api.dev.BaseIntegrationTest;
 import api.dev.infrastructure.security.jwt.JwtProperties;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Transactional          // ← rolls back every test — DB stays clean between runs
-@DisplayName("POST /api/v1/master/auth/login")
-class MasterAuthEndToEndControllerTest {
+@DisplayName("[E2E] POST /api/v1/master/auth/login")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class MasterAuthEndToEndControllerTest extends BaseIntegrationTest {
 
-    @Autowired private MockMvc mockMvc;
     @Autowired private JwtProperties jwtProperties;
 
-    // No @MockBean here — we want the REAL UserDetailsServiceImpl hitting the real DB
-    // (remove the @MockBean that was there before)
+    static String cachedToken;
+
+    @AfterAll
+    void tearDown() {
+        cleanDatabase();
+    }
 
     @Test
-    @DisplayName("returns 200 with token when credentials are valid")
-    @Sql("/sql/seed-master-user.sql")   // ← inserts test user before this test, rolled back after
-    void login_validCredentials_returnsToken() throws Exception {
+    @Order(1)
+    @DisplayName("1. DB connection is alive")
+    void dbConnection_isAlive() {
+        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+        Assertions.assertEquals(1, result);
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("2. returns 401 when email does not exist")
+    void login_unknownEmail_returns401() throws Exception {
         mockMvc.perform(post("/api/v1/master/auth/login")
-                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                        .contentType(Objects.requireNonNull(APPLICATION_JSON))
+                        .content("""
+                                {
+                                    "email": "nobody@test.com",
+                                    "password": "Pass12B4?"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("authentication_failed"));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("3. returns 401 when password is wrong")
+    void login_wrongPassword_returns401() throws Exception {
+        mockMvc.perform(post("/api/v1/master/auth/login")
+                        .contentType(Objects.requireNonNull(APPLICATION_JSON))
+                        .content("""
+                                {
+                                    "email": "master@webmaster.com",
+                                    "password": "WrongPassword!"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("authentication_failed"));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("4. returns 200 with token when credentials are valid")
+    void login_validCredentials_returnsToken() throws Exception {
+        var result = mockMvc.perform(post("/api/v1/master/auth/login")
+                        .contentType(Objects.requireNonNull(APPLICATION_JSON))
                         .content("""
                                 {
                                     "email": "master@webmaster.com",
@@ -45,38 +79,11 @@ class MasterAuthEndToEndControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.expires_in").value(jwtProperties.getTtl()))
-                .andExpect(jsonPath("$.role").value("MASTER"));
-    }
+                .andExpect(jsonPath("$.role").value("MASTER"))
+                .andReturn();
 
-    @Test
-    @DisplayName("returns 401 when password is wrong")
-    @Sql("/sql/seed-master-user.sql")
-    void login_wrongPassword_returns401() throws Exception {
-        mockMvc.perform(post("/api/v1/master/auth/login")
-                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
-                        .content("""
-                                {
-                                    "email": "master@test.com",
-                                    "password": "WrongPassword!"
-                                }
-                                """))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("authentication_failed"));
-    }
-
-    @Test
-    @DisplayName("returns 401 when email does not exist")
-    void login_unknownEmail_returns401() throws Exception {
-        // No seed needed — DB is empty, user simply won't be found
-        mockMvc.perform(post("/api/v1/master/auth/login")
-                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
-                        .content("""
-                                {
-                                    "email": "nobody@test.com",
-                                    "password": "Password1!"
-                                }
-                                """))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("authentication_failed"));
+        String body = result.getResponse().getContentAsString();
+        cachedToken = body.replaceAll(".*\"token\":\"([^\"]+)\".*", "$1");
+        Assertions.assertNotNull(cachedToken);
     }
 }

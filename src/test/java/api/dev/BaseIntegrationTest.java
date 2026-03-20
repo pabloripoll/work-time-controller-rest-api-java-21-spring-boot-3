@@ -38,7 +38,7 @@ public abstract class BaseIntegrationTest {
 
     protected void cleanDatabase() {
         jdbcTemplate.execute(
-            "TRUNCATE TABLE master_access_logs, master_profiles, masters, users " +
+            "TRUNCATE TABLE master_access_logs, master_profile, masters, users " +
             "RESTART IDENTITY CASCADE"
         );
     }

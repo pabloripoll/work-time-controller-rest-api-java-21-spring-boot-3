@@ -1,12 +1,10 @@
 package api.dev.presentation.rest.master;
 
-import api.dev.domain.master.repository.MasterAccessLogRepository;
-import api.dev.domain.shared.valueobject.Email;
-import api.dev.domain.user.model.entity.User;
+import api.dev.infrastructure.persistence.master.MasterAccessLogJpaRepository;
+import api.dev.infrastructure.persistence.user.UserJpaEntity;
+import api.dev.infrastructure.persistence.user.UserJpaRepository;
 import api.dev.domain.user.model.entity.UserRole;
 import api.dev.infrastructure.security.jwt.JwtProperties;
-import api.dev.infrastructure.security.service.UserDetailsServiceImpl;
-import api.dev.infrastructure.security.userdetails.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +18,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,37 +35,39 @@ class MasterAuthControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private JwtProperties jwtProperties;
 
-    // --- mock every bean that touches the DB ---
-    @MockBean private UserDetailsServiceImpl userDetailsService;
-    @MockBean private MasterAccessLogRepository masterAccessLogRepository; // ← this was missing
-
-    private AuthenticatedUser authenticatedMaster;
+    @MockBean private UserJpaRepository userJpaRepository;
+    @MockBean private MasterAccessLogJpaRepository masterAccessLogJpaRepository;
 
     private static final String RAW_PASSWORD    = "Pass12B4?";
     private static final String HASHED_PASSWORD = new BCryptPasswordEncoder().encode(RAW_PASSWORD);
 
+    private UserJpaEntity userJpaEntity;
+
     @BeforeEach
     void setUp() {
-        var domainUser = new User(
-                1L,
-                new Email("master@webmaster.com"),
-                HASHED_PASSWORD,
-                UserRole.MASTER,
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                null);
-        authenticatedMaster = new AuthenticatedUser(domainUser);
+        userJpaEntity = new UserJpaEntity();
+        userJpaEntity.setId(1L);
+        userJpaEntity.setEmail("master@webmaster.com");
+        userJpaEntity.setPassword(HASHED_PASSWORD);
+        userJpaEntity.setRole(UserRole.MASTER);
+        userJpaEntity.setCreatedByUserId(1L);
+        userJpaEntity.setCreatedAt(LocalDateTime.now());
+        userJpaEntity.setUpdatedAt(LocalDateTime.now());
 
-        // stub the access log save so AuthSuccessHandler doesn't hit the DB
-        when(masterAccessLogRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        // MasterJpaMapper.toDomain(MasterAccessLogJpaEntity) calls findById to hydrate the User
+        when(userJpaRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userJpaEntity));
+
+        // AuthSuccessHandler calls masterAccessLogRepository.save()
+        when(masterAccessLogJpaRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
     }
 
     @Test
     @DisplayName("returns 200 with token when credentials are valid")
     void login_validCredentials_returnsToken() throws Exception {
-        when(userDetailsService.loadUserByUsername("master@webmaster.com"))
-                .thenReturn(authenticatedMaster);
+        when(userJpaRepository.findByEmail("master@webmaster.com"))
+                .thenReturn(Optional.of(userJpaEntity));
 
         mockMvc.perform(post("/api/v1/master/auth/login")
                         .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
@@ -83,8 +86,8 @@ class MasterAuthControllerTest {
     @Test
     @DisplayName("returns 401 when password is wrong")
     void login_wrongPassword_returns401() throws Exception {
-        when(userDetailsService.loadUserByUsername("master@webmaster.com"))
-                .thenReturn(authenticatedMaster);
+        when(userJpaRepository.findByEmail("master@webmaster.com"))
+                .thenReturn(Optional.of(userJpaEntity));
 
         mockMvc.perform(post("/api/v1/master/auth/login")
                         .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
@@ -101,9 +104,8 @@ class MasterAuthControllerTest {
     @Test
     @DisplayName("returns 401 when email does not exist")
     void login_unknownEmail_returns401() throws Exception {
-        when(userDetailsService.loadUserByUsername(any()))
-                .thenThrow(new org.springframework.security.core.userdetails
-                        .UsernameNotFoundException("not found"));
+        when(userJpaRepository.findByEmail(anyString()))
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/v1/master/auth/login")
                         .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
