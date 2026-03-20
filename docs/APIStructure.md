@@ -32,7 +32,7 @@ Defines how to organize business logic inside those layers:
 - Repositories (interfaces)
 - Ubiquitous Language
 
-## 🎯 Directory Purposes
+## Directory Purposes
 
 | Layer           | Purpose                          | Examples                                                 |
 | --------------- | -------------------------------- | -------------------------------------------------------- |
@@ -42,7 +42,7 @@ Defines how to organize business logic inside those layers:
 | Presentation	  | User interaction	             |  REST controllers, CLI commands, GraphQL resolvers       |
 <br>
 
-## 📁 Project Structure
+## REST API Structure
 
 **Proposed structure desing overview:**
 ```bash
@@ -85,6 +85,29 @@ src/main/java/api/dev/
 ├── Domain/               # Pure business logic (Entities, VOs, Interfaces, Domain Services)
 ├── Infrastructure/       # Adapters (Doctrine repos, Mailer, Redis, Messaging)
 └── Presentation/         # Controllers, CLI
+```
+
+## Test structure
+
+```bash
+src/test/java/api/dev/
+├── domain/
+│   └── master/
+│       ├── MasterTest.java
+│       └── MasterProfileTest.java
+├── application/
+│   └── master/
+│       ├── CreateMasterUseCaseTest.java
+│       └── GetMasterByUserIdUseCaseTest.java
+├── infrastructure/
+│   └── security/
+│       ├── JwtServiceTest.java
+│       └── JwtAuthenticationFilterTest.java
+└── presentation/
+    └── rest/
+        └── master/
+            ├── MasterAuthControllerTest.java
+            └── MasterAccountControllerTest.java
 ```
 
 <!-- FOOTER -->

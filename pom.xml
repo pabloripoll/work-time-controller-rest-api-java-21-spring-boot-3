@@ -129,7 +129,12 @@
       <version>0.11.5</version>
       <scope>runtime</scope>
     </dependency>
-
+    <!-- .env file support -->
+    <dependency>
+      <groupId>me.paulschwarz</groupId>
+      <artifactId>spring-dotenv</artifactId>
+      <version>4.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -142,6 +147,11 @@
         <configuration>
           <trimStackTrace>false</trimStackTrace>
           <reportFormat>brief</reportFormat>
+          <!-- Limit heap to prevent OOM kill in Docker containers -->
+          <argLine>-Xms256m -Xmx512m -XX:+EnableDynamicAgentLoading</argLine>
+          <!-- Reuse the same JVM for all tests instead of forking per class -->
+          <reuseForks>true</reuseForks>
+          <forkCount>1</forkCount>
         </configuration>
       </plugin>
 

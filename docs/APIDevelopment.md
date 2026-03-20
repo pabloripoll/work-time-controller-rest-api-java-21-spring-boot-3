@@ -147,19 +147,38 @@ Then, you can use if needed
 /var/www $ mvn spring-boot:run
 ```
 
-Manage the migrations
+### When are start and stop actually used?
+
+In the professional Java world, spring-boot:start and spring-boot:stop are almost exclusively used for Automated Integration Testing inside the pom.xml, not for running the actual development server.
+
+#### A CI/CD pipeline (like GitHub Actions) will use it like this:
+
+- `mvn spring-boot:start` (Starts the app in the background)
+- `mvn failsafe:integration-test` (Fires HTTP requests at the background app to test it)
+- `mvn spring-boot:stop` (Kills the background app so the pipeline can finish)
+
+
+## Migrations
+
 ```bash
 /var/www $ mvn liquibase:update
 ```
 
-When are start and stop actually used?
-In the professional Java world, spring-boot:start and spring-boot:stop are almost exclusively used for Automated Integration Testing inside the pom.xml, not for running the actual development server.
+## Seeders
 
-A CI/CD pipeline (like GitHub Actions) will use it like this:
+The command to run the seeder is:
+```bash
+$ mvn spring-boot:run -Dspring-boot.run.arguments=--seed -Dspring-boot.run.profiles=local
+```
 
-mvn spring-boot:start (Starts the app in the background)
-mvn failsafe:integration-test (Fires HTTP requests at the background app to test it)
-mvn spring-boot:stop (Kills the background app so the pipeline can finish)
+The -Dspring-boot.run.profiles=local activates the @Profile({"dev", "local"}) on DatabaseSeeder and UserMasterSeeder. Without it, Spring won't load those beans and nothing runs.
+
+Summary — three ways to seed
+
+Command	                                                                                Profile     What runs
+mvn spring-boot:run -Dspring-boot.run.arguments=--seed -Dspring-boot.run.profiles=local	local	    DatabaseSeeder → masterSeeder.seed() → exits
+mvn spring-boot:run -Dspring-boot.run.profiles=local	                                local       App starts normally, no seeding
+mvn test                                                                                test	    BaseIntegrationTest.setupDatabase() → masterSeeder.seed() directly
 
 ## Create the Application / REST API
 
@@ -194,6 +213,78 @@ All toghether:
 ```bash
 /var/www $ mvn clean package && cp target/api-springboot-0.0.1-SNAPSHOT.jar target/app.jar && supervisorctl -c /etc/supervisor/supervisord.conf reload
 ```
+
+## Testing
+
+I always try to set as many end-to-end tests against API contracts as possible because it gives me a solid confidence on the API reliability.
+
+The strategy is to run level 3 End-to-end / Persistence tests:
+```sh
+┌─────────────────────────────────────────────────────────┐
+│  Level 1 — Unit tests                                   │
+│  No Spring, no DB, no network                           │
+│  MasterTest, JwtServiceTest, CreateMasterUseCaseTest    │
+│  Speed: ~milliseconds                                   │
+├─────────────────────────────────────────────────────────┤
+│  Level 2 — Integration tests (what you have now)        │
+│  Spring context + MockMvc + @MockBean (no real DB)      │
+│  MasterAuthControllerTest, MasterAccountControllerTest  │
+│  Speed: ~seconds (context startup cost)                 │
+├─────────────────────────────────────────────────────────┤
+│  Level 3 — End-to-end / persistence tests               │
+│  Real DB required — NOT implemented yet                 │
+│  Would use @DataJpaTest or Testcontainers               │
+│  Speed: ~tens of seconds                                │
+└─────────────────────────────────────────────────────────┘
+```
+
+Testing flow
+```bash
+mvn test
+   │
+   ├── Spring context starts
+   │     └── Liquibase runs migrations on worktic_local_test   ← Step 2
+   │
+   ├── BaseIntegrationTest.setupDatabase()
+   │     ├── SELECT 1  ← Step 1: verify connection
+   │     └── INSERT master@webmaster.com etc.  ← Step 3: seed
+   │
+   ├── @Order(1..4) tests run  ← Step 4: test endpoints, cache JWT
+   │
+   └── @AfterAll cleanDatabase()
+         └── TRUNCATE all tables  ← clean slate for next run
+```
+
+To run test is neccessary to access into API container
+```bash
+$ make apirest-ssh
+```
+
+Testing
+```bash
+# Run all tests
+/var/www/ $ mvn test
+
+# Run only a specific class
+/var/www/ $ mvn test -Dtest=JwtServiceTest
+
+# Run with verbose output
+/var/www/ $ mvn test -Dsurefire.reportFormat=plain
+```
+
+### What each test layer validates
+
+| Test class	                   | Validates                                                          |
+| -------------------------------- | ------------------------------------------------------------------ |
+| MasterTest	                   | Domain business rules — activate, ban, unban                       |
+| MasterProfileTest                | Validation on nickname, avatar management                          |
+| CreateMasterUseCaseTest	       | Orchestration, duplicate email guard                               |
+| JwtServiceTest	               | Token generation, parsing, expiry, tamper detection                |
+| JwtAuthenticationFilterTest	   | Filter passes/blocks correctly, sets SecurityContext               |
+| MasterAuthControllerTest         | Full HTTP login flow — success, wrong password, unknown email      |
+| MasterAccountControllerTest	   | Role guard (401/403), authenticated profile read/update            |
+
+
 
 <!-- FOOTER -->
 <br>

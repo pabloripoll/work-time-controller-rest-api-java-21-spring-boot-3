@@ -11,32 +11,6 @@
 
 Stateless API with JWT
 
-## Scripts
-
-- ./config/packages/security.yaml
-
-- ./src/Infrastructure/Event/Listener/JWTCreatedListener.php
-
-- ./src/Infrastructure/Security/JwtAuthenticationEntryPoint.php
-
-- ./src/Infrastructure/Security/CustomAuthenticationSuccessHandler.php
-
-- ./src/Application/Employee/Service/EmployeeAuthenticationService.php
-
-- ./src/Presentation/Http/Rest/User/UserAuthController.php
-
-- ./src/Infrastructure/Security/ApiAccessDeniedHandler.php
-
-- ./src/Infrastructure/Http/AuthenticatedEmployeeResolver.php *(not in used but is for further development)*
-<br><br>
-
-## CORS
-
-- ./config/packages/nelmio_cors.yaml
-
-Update `allow_origin` property that is set for testing only. Change to your Application IP instead.
-<br><br>
-
 ## Test users
 
 For manually testing porpuses, there are fixtured main users to use them on front-end on development stages.

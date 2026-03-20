@@ -64,13 +64,16 @@ tmp/
 temp/
 .cache/
 
-# Java keystores / credentials
+# Java keystores / credentials / Environment files
 *.jks
 *.keystore
 *.p12
 .env
+.env.test
 secrets.*
 credentials.*
+# Keep the example as a template
+!.env.example
 
 # Spring / runtime
 spring.log

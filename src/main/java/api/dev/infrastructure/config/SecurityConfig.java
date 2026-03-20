@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // enables @PreAuthorize on controllers
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -51,34 +50,24 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            // --- Login endpoints (equivalent to Symfony json_login firewalls) ---
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
-
-            // Master login
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/master/auth/login").permitAll()
                 .requestMatchers("/api/v1/admin/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/login").permitAll()
-                .requestMatchers("/api/v1/auth/refresh").permitAll()   // controller validates token itself
+                .requestMatchers("/api/v1/auth/refresh").permitAll()
                 .requestMatchers("/api/v1/master/**").hasRole("MASTER")
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/account/**").hasRole("EMPLOYEE")
                 .anyRequest().authenticated()
             )
-
-            // --- Error handlers (equivalent to entry_point and access_denied_handler) ---
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(entryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
             )
-
-            // --- JWT filter runs before Spring's auth filter ---
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
-            // --- Login processing (equivalent to json_login) ---
             .addFilter(masterLoginFilter())
             .addFilter(adminLoginFilter())
             .addFilter(employeeLoginFilter());
@@ -87,7 +76,7 @@ public class SecurityConfig {
     }
 
     private UsernamePasswordAuthenticationFilter masterLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager(null));
+        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/api/v1/master/auth/login");
         filter.setUsernameParameter("email");
         filter.setPasswordParameter("password");
@@ -98,7 +87,7 @@ public class SecurityConfig {
     }
 
     private UsernamePasswordAuthenticationFilter adminLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager(null));
+        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/api/v1/admin/auth/login");
         filter.setUsernameParameter("email");
         filter.setPasswordParameter("password");
@@ -109,7 +98,7 @@ public class SecurityConfig {
     }
 
     private UsernamePasswordAuthenticationFilter employeeLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager(null));
+        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/api/v1/auth/login");
         filter.setUsernameParameter("email");
         filter.setPasswordParameter("password");
@@ -129,7 +118,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager() throws Exception {
+        // Build directly from the provider — this picks up @MockBean UserDetailsServiceImpl
+        // in tests because the provider holds the Spring-proxied reference
+        return authenticationProvider()::authenticate;  // ← key change
     }
 }

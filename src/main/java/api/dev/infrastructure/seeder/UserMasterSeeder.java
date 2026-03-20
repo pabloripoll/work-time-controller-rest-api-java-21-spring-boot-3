@@ -15,7 +15,7 @@ import java.text.Normalizer;
 import java.util.Optional;
 
 @Component
-@Profile({"dev", "local"})
+@Profile({"dev", "local", "test"})
 public class UserMasterSeeder {
 
     private final UserRepository userRepository;

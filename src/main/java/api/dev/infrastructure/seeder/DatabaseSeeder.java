@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-@Profile({"dev", "local"})
+@Profile({"dev", "local", "test"})
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserMasterSeeder masterSeeder;
