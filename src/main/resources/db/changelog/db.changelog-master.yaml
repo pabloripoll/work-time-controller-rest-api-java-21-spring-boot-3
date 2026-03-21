@@ -112,7 +112,7 @@ databaseChangeLog:
       author: developer
       changes:
         - sqlFile:
-            path: db/migrations/20250106103032__create_employee_workplace_table.sql
+            path: db/migrations/20250106103032__create_employee_profile_table.sql
             relativeToChangelogFile: false
             splitStatements: true
             endDelimiter: ';'
@@ -121,7 +121,7 @@ databaseChangeLog:
       author: developer
       changes:
         - sqlFile:
-            path: db/migrations/20250106103033__create_employee_location_table.sql
+            path: db/migrations/20250106103033__create_employee_workplace_table.sql
             relativeToChangelogFile: false
             splitStatements: true
             endDelimiter: ';'
@@ -130,7 +130,7 @@ databaseChangeLog:
       author: developer
       changes:
         - sqlFile:
-            path: db/migrations/20250106103034__create_employee_profile_table.sql
+            path: db/migrations/20250106103034__create_employee_location_table.sql
             relativeToChangelogFile: false
             splitStatements: true
             endDelimiter: ';'
