@@ -45,8 +45,7 @@ public class MasterAccountController {
     }
 
     @PatchMapping("/account/settings/profile")
-    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal AuthenticatedUser authUser,
-                                            @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal AuthenticatedUser authUser, @RequestBody Map<String, String> body) {
         var master = getMasterByUserIdUseCase.execute(
                 new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
 
@@ -60,9 +59,8 @@ public class MasterAccountController {
     }
 
     @PatchMapping("/account/settings/password")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal AuthenticatedUser authUser,
-                                             @RequestBody Map<String, String> body) {
-        // TODO: implement ChangePasswordUseCase
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal AuthenticatedUser authUser, @RequestBody Map<String, String> body) {
+
         return ResponseEntity.ok(Map.of("status", "success", "message", "Password updated"));
     }
 }

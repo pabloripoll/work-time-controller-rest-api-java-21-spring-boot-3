@@ -54,6 +54,7 @@ public class UserMasterSeeder {
 
         if (existingMaster.isEmpty()) {
             Master master = Master.create(user);
+            master.activate();
             master.setProfile(MasterProfile.create(normalizedNickname));
             masterRepository.save(master);
         }

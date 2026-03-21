@@ -25,7 +25,7 @@ public class Master {
     public static Master create(User user) {
         Master master    = new Master();
         master.user      = user;
-        master.isActive  = true;
+        master.isActive  = false;
         master.isBanned  = false;
         master.createdAt = LocalDateTime.now();
         master.updatedAt = LocalDateTime.now();

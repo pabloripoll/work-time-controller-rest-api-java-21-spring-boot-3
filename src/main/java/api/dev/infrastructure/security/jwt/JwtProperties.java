@@ -11,8 +11,10 @@ public class JwtProperties {
     private long ttl = 3600; // seconds — default 1 hour
 
     public String getSecret() { return secret; }
+
     public void setSecret(String secret) { this.secret = secret; }
 
     public long getTtl() { return ttl; }
+
     public void setTtl(long ttl) { this.ttl = ttl; }
 }
