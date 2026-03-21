@@ -76,10 +76,14 @@ public class SecurityConfig {
                 .authenticationEntryPoint(entryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            /* .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAt(masterLoginFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(adminLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-            .addFilterAfter(employeeLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterAfter(employeeLoginFilter(), UsernamePasswordAuthenticationFilter.class); */
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(masterLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(adminLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(employeeLoginFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

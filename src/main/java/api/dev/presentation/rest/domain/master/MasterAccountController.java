@@ -20,34 +20,32 @@ public class MasterAccountController {
     private final GetMasterByUserIdUseCase getMasterByUserIdUseCase;
     private final UpdateMasterProfileUseCase updateProfileUseCase;
 
-    public MasterAccountController(GetMasterByUserIdUseCase getMasterByUserIdUseCase,
-                                    UpdateMasterProfileUseCase updateProfileUseCase) {
+    public MasterAccountController(
+        GetMasterByUserIdUseCase getMasterByUserIdUseCase,
+        UpdateMasterProfileUseCase updateProfileUseCase
+    ) {
         this.getMasterByUserIdUseCase = getMasterByUserIdUseCase;
         this.updateProfileUseCase     = updateProfileUseCase;
     }
 
     @GetMapping("/account/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal AuthenticatedUser authUser) {
-        var master = getMasterByUserIdUseCase.execute(
-                new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
+        var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
 
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "data", Map.of(
-                        "id",         master.id(),
-                        "user_id",    master.userId(),
-                        "nickname",   master.profile() != null ? master.profile().nickname() : null,
-                        "avatar",     master.profile() != null ? master.profile().avatar()   : null,
-                        "created_at", master.createdAt().toString(),
-                        "updated_at", master.updatedAt().toString()
-                )
-        ));
+        Map<String, Object> data = new java.util.LinkedHashMap<>();
+        data.put("id",         master.id());
+        data.put("user_id",    master.userId());
+        data.put("nickname",   master.profile() != null ? master.profile().nickname() : null);
+        data.put("avatar",     master.profile() != null ? master.profile().avatar()   : null);
+        data.put("created_at", master.createdAt().toString());
+        data.put("updated_at", master.updatedAt().toString());
+
+        return ResponseEntity.ok(Map.of("status", "success", "data", data));
     }
 
     @PatchMapping("/account/settings/profile")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal AuthenticatedUser authUser, @RequestBody Map<String, String> body) {
-        var master = getMasterByUserIdUseCase.execute(
-                new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
+        var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
 
         updateProfileUseCase.execute(new UpdateMasterProfileCommand(
                 master.id(),

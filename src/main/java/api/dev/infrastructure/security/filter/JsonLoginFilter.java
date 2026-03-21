@@ -31,27 +31,28 @@ public class JsonLoginFilter extends OncePerRequestFilter {
                            AuthenticationSuccessHandler successHandler,
                            AuthenticationFailureHandler failureHandler,
                            ObjectMapper objectMapper) {
-        this.matcher              = new AntPathRequestMatcher(loginUrl, "POST");
+        this.matcher               = new AntPathRequestMatcher(loginUrl, "POST");
         this.authenticationManager = authenticationManager;
-        this.successHandler       = successHandler;
-        this.failureHandler       = failureHandler;
-        this.objectMapper         = objectMapper;
+        this.successHandler        = successHandler;
+        this.failureHandler        = failureHandler;
+        this.objectMapper          = objectMapper;
     }
 
     @SuppressWarnings("null")
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // OncePerRequestFilter's shouldNotFilter — skip all non-login requests
-        return !matcher.matches(request);
+        boolean skip = !matcher.matches(request);
+
+        return skip;
     }
 
     @SuppressWarnings("null")
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
-            throws ServletException, IOException {
-
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain chain
+    ) throws ServletException, IOException {
         try {
             Map<String, Object> body = objectMapper.readValue(
                 request.getInputStream(),
