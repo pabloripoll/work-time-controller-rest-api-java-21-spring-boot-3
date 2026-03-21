@@ -2,6 +2,8 @@ package api.dev.infrastructure.persistence.master;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "master_access_logs")
@@ -35,6 +37,7 @@ public class MasterAccessLogJpaEntity {
     @Column(name = "requests_count", nullable = false)
     private int requestsCount;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "payload", columnDefinition = "JSON")
     private String payload;
 

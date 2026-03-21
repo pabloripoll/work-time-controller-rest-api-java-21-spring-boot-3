@@ -190,9 +190,12 @@ The `-Dspring-boot.run.profiles=dev` activates the @Profile({"dev", "local"}) on
     - Profile Env.: test
     - What runs: BaseIntegrationTest.setupDatabase() → masterSeeder.seed() directly
 
-### Option 2 — Separate Maven exec profile (cleanest CLI approach)
+### Option 2 — Seeder Cli
 
-Add a dedicated exec profile to pom.xml that runs a standalone main() in a separate process — no port conflict with the running app:
+A dedicated exec profile that runs a standalone main() in a separate process — no port conflict with the running app it does not boot a full Spring context, so JPA repositories are never registered — to run a main seeders instead of option 1 commands.
+```bash
+/var/www $ mvn exec:java -Pseed
+```
 <br><br>
 
 ## Create the Application / REST API

@@ -37,7 +37,7 @@ public class CreateMasterUseCase {
             throw new ValidationException("Email already in use: " + command.email());
         }
 
-        // User.createMaster signature: (Long id, Email email, String password, Long createdByUserId)
+        // User.createMaster signature: (Long id, Email email, String password)
         User user = User.createMaster(
                 null,
                 email,

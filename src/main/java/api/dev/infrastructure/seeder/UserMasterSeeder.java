@@ -43,8 +43,6 @@ public class UserMasterSeeder {
 
         User user;
         if (existingUser.isEmpty()) {
-            // User.createMaster signature: (Long id, Email email, String password, Long createdByUserId)
-            // — no nickname parameter in this factory method
             user = User.createMaster(null, email, "temp");
             user.updatePassword(passwordHasher.hashPassword("Pass12B4?"));
             user = userRepository.save(user);
@@ -55,7 +53,6 @@ public class UserMasterSeeder {
         Optional<Master> existingMaster = masterRepository.findByUserId(user.getId());
 
         if (existingMaster.isEmpty()) {
-            // Master.create signature: (User user) — not (Long, boolean, boolean)
             Master master = Master.create(user);
             master.setProfile(MasterProfile.create(normalizedNickname));
             masterRepository.save(master);

@@ -25,10 +25,11 @@ public class Master {
     public static Master create(User user) {
         Master master    = new Master();
         master.user      = user;
-        master.isActive  = false;
+        master.isActive  = true;
         master.isBanned  = false;
         master.createdAt = LocalDateTime.now();
         master.updatedAt = LocalDateTime.now();
+
         return master;
     }
 
@@ -36,9 +37,15 @@ public class Master {
      * Factory: reconstitute from persistence.
      * All fields are known, including DB-assigned ID.
      */
-    public static Master reconstitute(Long id, User user, boolean isActive, boolean isBanned,
-                                       MasterProfile profile,
-                                       LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public static Master reconstitute(
+        Long id,
+        User user,
+        boolean isActive,
+        boolean isBanned,
+        MasterProfile profile,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+    ) {
         Master master    = new Master();
         master.id        = id;
         master.user      = user;
@@ -47,6 +54,7 @@ public class Master {
         master.profile   = profile;
         master.createdAt = createdAt;
         master.updatedAt = updatedAt;
+
         return master;
     }
 
@@ -77,16 +85,20 @@ public class Master {
     // Getters — no raw setters on business state (use methods above)
     // ------------------------------------------------------------------ //
     public Long getId()               { return id; }
+
     public void setId(Long id)        { this.id = id; } // only for JPA mapper
 
     public User getUser()             { return user; }
 
     public boolean isActive()         { return isActive; }
+
     public boolean isBanned()         { return isBanned; }
 
     public MasterProfile getProfile() { return profile; }
+
     public void setProfile(MasterProfile profile) { this.profile = profile; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

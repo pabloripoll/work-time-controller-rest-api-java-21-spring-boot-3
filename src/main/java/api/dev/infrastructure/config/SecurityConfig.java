@@ -1,10 +1,13 @@
 package api.dev.infrastructure.config;
 
 import api.dev.infrastructure.security.filter.JwtAuthenticationFilter;
+import api.dev.infrastructure.security.filter.JsonLoginFilter;
 import api.dev.infrastructure.security.handler.*;
 import api.dev.infrastructure.security.service.UserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@Profile("!seed")
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -28,6 +32,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint entryPoint;
     private final ApiAccessDeniedHandler accessDeniedHandler;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ObjectMapper objectMapper;
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService,
                            JwtAuthenticationFilter jwtFilter,
@@ -35,7 +40,8 @@ public class SecurityConfig {
                            AuthFailureHandler failureHandler,
                            JwtAuthenticationEntryPoint entryPoint,
                            ApiAccessDeniedHandler accessDeniedHandler,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           BCryptPasswordEncoder passwordEncoder,
+                           ObjectMapper objectMapper) {
         this.userDetailsService  = userDetailsService;
         this.jwtFilter           = jwtFilter;
         this.successHandler      = successHandler;
@@ -43,6 +49,7 @@ public class SecurityConfig {
         this.entryPoint          = entryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.passwordEncoder     = passwordEncoder;
+        this.objectMapper        = objectMapper;
     }
 
     @Bean
@@ -52,60 +59,49 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
-            .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/master/auth/login").permitAll()
-                .requestMatchers("/api/v1/admin/auth/login").permitAll()
-                .requestMatchers("/api/v1/auth/login").permitAll()
-                .requestMatchers("/api/v1/auth/refresh").permitAll()
-                .requestMatchers("/api/v1/master/**").hasRole("MASTER")
-                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/account/**").hasRole("EMPLOYEE")
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(entryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilter(masterLoginFilter())
-            .addFilter(adminLoginFilter())
-            .addFilter(employeeLoginFilter());
+            .addFilterAt(masterLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(adminLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(employeeLoginFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    private UsernamePasswordAuthenticationFilter masterLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
-        filter.setFilterProcessesUrl("/api/v1/master/auth/login");
-        filter.setUsernameParameter("email");
-        filter.setPasswordParameter("password");
-        filter.setAuthenticationSuccessHandler(successHandler);
-        filter.setAuthenticationFailureHandler(failureHandler);
-
-        return filter;
+    private JsonLoginFilter masterLoginFilter() throws Exception {
+        return new JsonLoginFilter(
+            "/api/v1/master/auth/login",
+            authenticationManager(),
+            successHandler,
+            failureHandler,
+            objectMapper
+        );
     }
 
-    private UsernamePasswordAuthenticationFilter adminLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
-        filter.setFilterProcessesUrl("/api/v1/admin/auth/login");
-        filter.setUsernameParameter("email");
-        filter.setPasswordParameter("password");
-        filter.setAuthenticationSuccessHandler(successHandler);
-        filter.setAuthenticationFailureHandler(failureHandler);
-
-        return filter;
+    private JsonLoginFilter adminLoginFilter() throws Exception {
+        return new JsonLoginFilter(
+            "/api/v1/admin/auth/login",
+            authenticationManager(),
+            successHandler,
+            failureHandler,
+            objectMapper
+        );
     }
 
-    private UsernamePasswordAuthenticationFilter employeeLoginFilter() throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter(authenticationManager());
-        filter.setFilterProcessesUrl("/api/v1/auth/login");
-        filter.setUsernameParameter("email");
-        filter.setPasswordParameter("password");
-        filter.setAuthenticationSuccessHandler(successHandler);
-        filter.setAuthenticationFailureHandler(failureHandler);
-
-        return filter;
+    private JsonLoginFilter employeeLoginFilter() throws Exception {
+        return new JsonLoginFilter(
+            "/api/v1/auth/login",
+            authenticationManager(),
+            successHandler,
+            failureHandler,
+            objectMapper
+        );
     }
 
     @Bean
@@ -119,8 +115,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        // Build directly from the provider — this picks up @MockBean UserDetailsServiceImpl
-        // in tests because the provider holds the Spring-proxied reference
-        return authenticationProvider()::authenticate;  // ← key change
+        return authenticationProvider()::authenticate;
     }
 }

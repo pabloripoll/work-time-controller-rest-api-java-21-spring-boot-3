@@ -159,6 +159,10 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <!-- Specify the main class explicitly -->
+          <mainClass>api.dev.Application</mainClass>
+        </configuration>
       </plugin>
 
       <!-- Liquibase (migrations) - runtime scope so tests don't require it; tests can disable it via test properties -->
@@ -190,14 +194,14 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.1.0</version>
             <configuration>
-              <mainClass>api.dev.infrastructure.seeder.SeederMain</mainClass>
+              <mainClass>api.dev.infrastructure.seeder.SeederCli</mainClass>
               <arguments>
                 <argument>--seed</argument>
               </arguments>
               <systemProperties>
                 <systemProperty>
                   <key>spring.profiles.active</key>
-                  <value>dev</value>
+                  <value>dev,seed</value>
                 </systemProperty>
                 <systemProperty>
                   <key>spring.main.web-application-type</key>

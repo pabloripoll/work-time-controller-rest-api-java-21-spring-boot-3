@@ -43,6 +43,7 @@ class MasterAuthControllerTest {
 
     private UserJpaEntity userJpaEntity;
 
+    @SuppressWarnings("null")
     @BeforeEach
     void setUp() {
         userJpaEntity = new UserJpaEntity();
@@ -62,7 +63,7 @@ class MasterAuthControllerTest {
                 .thenAnswer(i -> i.getArgument(0));
     }
 
-    /* @Test
+    @Test
     @DisplayName("returns 200 with token when credentials are valid")
     void login_validCredentials_returnsToken() throws Exception {
         when(userJpaRepository.findByEmail("master@webmaster.com"))
@@ -80,7 +81,7 @@ class MasterAuthControllerTest {
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.expires_in").value(jwtProperties.getTtl()))
                 .andExpect(jsonPath("$.role").value("MASTER"));
-    } */
+    }
 
     @Test
     @DisplayName("returns 401 when password is wrong")
