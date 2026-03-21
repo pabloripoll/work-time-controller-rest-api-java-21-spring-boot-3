@@ -60,6 +60,16 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
             .authorizeHttpRequests(auth -> auth
+                // ── Public login endpoints
+                .requestMatchers("/api/v1/master/auth/login").permitAll()
+                .requestMatchers("/api/v1/admin/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/refresh").permitAll()
+                // ── Role-protected areas — must be authenticated
+                .requestMatchers("/api/v1/master/**").hasRole("MASTER")
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/account/**").hasRole("EMPLOYEE")
+                // ── Everything else is public
                 .anyRequest().permitAll()
             )
             .exceptionHandling(ex -> ex
