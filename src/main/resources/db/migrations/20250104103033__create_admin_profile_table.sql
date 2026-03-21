@@ -10,3 +10,9 @@ CREATE TABLE IF NOT EXISTS "admin_profile" (
 );
 
 CREATE INDEX IF NOT EXISTS idx_admin_profile_admin_id ON "admin_profile" ("admin_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_admin_profile_admin_id;
+-- rollback DROP TABLE IF EXISTS "admin_profile" CASCADE;

@@ -14,3 +14,11 @@ CREATE TABLE IF NOT EXISTS "employee_workplace" (
 CREATE INDEX IF NOT EXISTS idx_employee_workplace_employee_id ON "employee_workplace" ("employee_id");
 CREATE INDEX IF NOT EXISTS idx_employee_workplace_department_id ON "employee_workplace" ("department_id");
 CREATE INDEX IF NOT EXISTS idx_employee_workplace_job_id ON "employee_workplace" ("job_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employee_workplace_job_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_workplace_department_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_workplace_employee_id;
+-- rollback DROP TABLE IF EXISTS "employee_workplace" CASCADE;

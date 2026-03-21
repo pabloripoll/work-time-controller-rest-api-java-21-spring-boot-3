@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS "masters" (
 );
 
 CREATE INDEX IF NOT EXISTS idx_masters_user_id ON "masters" ("user_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_masters_user_id;
+-- rollback DROP TABLE IF EXISTS "masters" CASCADE;

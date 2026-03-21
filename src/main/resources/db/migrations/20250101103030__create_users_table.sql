@@ -13,3 +13,11 @@ CREATE TABLE IF NOT EXISTS "users" (
 CREATE INDEX IF NOT EXISTS idx_users_role ON "users" ("role");
 CREATE INDEX IF NOT EXISTS idx_users_created_at ON "users" ("created_at");
 CREATE INDEX IF NOT EXISTS idx_users_deleted_at ON "users" ("deleted_at");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_users_deleted_at;
+-- rollback DROP INDEX IF EXISTS idx_users_created_at;
+-- rollback DROP INDEX IF EXISTS idx_users_role;
+-- rollback DROP TABLE IF EXISTS "users" CASCADE;

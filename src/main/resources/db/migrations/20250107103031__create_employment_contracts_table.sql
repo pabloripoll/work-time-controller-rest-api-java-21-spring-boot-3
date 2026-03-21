@@ -21,3 +21,11 @@ CREATE TABLE IF NOT EXISTS "employment_contracts" (
 CREATE INDEX IF NOT EXISTS idx_employment_contracts_contract_type_id ON "employment_contracts" ("contract_type_id");
 CREATE INDEX IF NOT EXISTS idx_employment_contracts_employee_id ON "employment_contracts" ("employee_id");
 CREATE INDEX IF NOT EXISTS idx_employment_contracts_admin_id ON "employment_contracts" ("admin_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employment_contracts_admin_id;
+-- rollback DROP INDEX IF EXISTS idx_employment_contracts_employee_id;
+-- rollback DROP INDEX IF EXISTS idx_employment_contracts_contract_type_id;
+-- rollback DROP TABLE IF EXISTS "employment_contracts" CASCADE;

@@ -15,3 +15,10 @@ CREATE TABLE IF NOT EXISTS "employees" (
 
 CREATE INDEX IF NOT EXISTS idx_employees_user_id ON "employees" ("user_id");
 CREATE INDEX IF NOT EXISTS idx_employees_created_by_user_id ON "employees" ("created_by_user_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employees_created_by_user_id;
+-- rollback DROP INDEX IF EXISTS idx_employees_user_id;
+-- rollback DROP TABLE IF EXISTS "employees" CASCADE;

@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS "office_jobs" (
 );
 
 CREATE INDEX IF NOT EXISTS idx_office_jobs_department_id ON "office_jobs" ("department_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_office_jobs_department_id;
+-- rollback DROP TABLE IF EXISTS "office_jobs" CASCADE;

@@ -33,3 +33,17 @@ CREATE INDEX IF NOT EXISTS idx_employee_location_state_id ON "employee_location"
 CREATE INDEX IF NOT EXISTS idx_employee_location_district_id ON "employee_location" ("district_id");
 CREATE INDEX IF NOT EXISTS idx_employee_location_city_id ON "employee_location" ("city_id");
 CREATE INDEX IF NOT EXISTS idx_employee_location_suburb_id ON "employee_location" ("suburb_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employee_location_employee_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_continent_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_zone_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_country_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_region_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_state_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_district_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_city_id;
+-- rollback DROP INDEX IF EXISTS idx_employee_location_suburb_id;
+-- rollback DROP TABLE IF EXISTS "employee_location" CASCADE;

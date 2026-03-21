@@ -8,3 +8,9 @@ CREATE TABLE IF NOT EXISTS "employment_contract_types" (
 );
 
 CREATE INDEX IF NOT EXISTS idx_employment_contract_types_title ON "employment_contract_types" ("title");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employment_contract_types_title;
+-- rollback DROP TABLE IF EXISTS "employment_contract_types" CASCADE;

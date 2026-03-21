@@ -11,3 +11,10 @@ CREATE TABLE IF NOT EXISTS "employment_workdays_logs" (
 
 CREATE INDEX IF NOT EXISTS idx_employment_workdays_logs_workday_id ON "employment_workdays_logs" ("workday_id");
 CREATE INDEX IF NOT EXISTS idx_employment_workdays_logs_admin_id ON "employment_workdays_logs" ("admin_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employment_workdays_logs_admin_id;
+-- rollback DROP INDEX IF EXISTS idx_employment_workdays_logs_workday_id;
+-- rollback DROP TABLE IF EXISTS "employment_workdays_logs" CASCADE;

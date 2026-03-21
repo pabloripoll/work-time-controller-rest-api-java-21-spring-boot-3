@@ -24,3 +24,8 @@ CREATE TABLE IF NOT EXISTS "locations" (
 	UNIQUE ("slug"),
 	UNIQUE ("name")
 );
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP TABLE IF EXISTS "locations" CASCADE;

@@ -7,3 +7,8 @@ CREATE TABLE IF NOT EXISTS "office_departments" (
 	PRIMARY KEY ("id"),
 	UNIQUE ("name")
 );
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP TABLE IF EXISTS "office_departments" CASCADE;

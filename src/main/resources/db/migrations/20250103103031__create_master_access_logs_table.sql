@@ -19,3 +19,11 @@ CREATE TABLE IF NOT EXISTS "master_access_logs" (
 CREATE INDEX IF NOT EXISTS idx_master_access_logs_user_id ON "master_access_logs" ("user_id");
 CREATE INDEX IF NOT EXISTS idx_master_access_logs_expires_at ON "master_access_logs" ("expires_at");
 CREATE INDEX IF NOT EXISTS idx_master_access_logs_token ON "master_access_logs" ("token");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_master_access_log_token;
+-- rollback DROP INDEX IF EXISTS idx_master_access_logs_expires_at;
+-- rollback DROP INDEX IF EXISTS idx_master_access_logs_token;
+-- rollback DROP TABLE IF EXISTS "master_access_logs" CASCADE;

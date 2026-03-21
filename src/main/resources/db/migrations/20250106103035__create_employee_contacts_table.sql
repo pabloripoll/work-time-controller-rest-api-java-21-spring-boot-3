@@ -10,3 +10,9 @@ CREATE TABLE IF NOT EXISTS "employee_contacts" (
 );
 
 CREATE INDEX IF NOT EXISTS idx_employee_contacts_employee_id ON "employee_contacts" ("employee_id");
+
+-- -----------------------------------------------------------------------
+-- ROLLBACK
+-- -----------------------------------------------------------------------
+-- rollback DROP INDEX IF EXISTS idx_employee_contacts_employee_id;
+-- rollback DROP TABLE IF EXISTS "employee_contacts" CASCADE;
