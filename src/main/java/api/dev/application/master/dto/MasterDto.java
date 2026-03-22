@@ -7,6 +7,7 @@ public record MasterDto(
         Long userId,
         boolean isActive,
         boolean isBanned,
+        boolean isSupermaster,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         MasterProfileDto profile

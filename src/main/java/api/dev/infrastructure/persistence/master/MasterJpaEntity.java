@@ -20,6 +20,9 @@ public class MasterJpaEntity {
     @Column(name = "is_banned", nullable = false)
     private boolean isBanned;
 
+    @Column(name = "is_supermaster", nullable = false)
+    private boolean isSupermaster;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -46,6 +49,10 @@ public class MasterJpaEntity {
     public boolean isBanned() { return isBanned; }
 
     public void setBanned(boolean banned) { isBanned = banned; }
+
+    public boolean isSupermaster() { return isSupermaster; }
+
+    public void setIsSupermaster(boolean supermaster) { isSupermaster = supermaster; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 

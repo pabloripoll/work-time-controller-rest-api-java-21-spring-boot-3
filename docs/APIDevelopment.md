@@ -288,6 +288,12 @@ Testing
 
 # Run with verbose output
 /var/www/ $ mvn test -Dsurefire.reportFormat=plain
+
+# Run test script
+/var/www $ mvn test -Dtest=MasterAccountControllerTest -Dspring.profiles.active=test
+
+# Run test script method
+/var/www $ mvn test -Dtest=MasterAccountControllerTest#getProfile_authenticated_returns200 -Dspring.profiles.active=test
 ```
 
 ### What each test layer validates

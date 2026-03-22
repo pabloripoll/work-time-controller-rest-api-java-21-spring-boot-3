@@ -52,6 +52,7 @@ public class MasterJpaMapper {
                 user,
                 entity.isActive(),
                 entity.isBanned(),
+                entity.isSupermaster(),
                 profile,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
@@ -64,6 +65,7 @@ public class MasterJpaMapper {
         entity.setUserId(master.getUser().getId());
         entity.setActive(master.isActive());
         entity.setBanned(master.isBanned());
+        entity.setIsSupermaster(master.isSupermaster());
         entity.setCreatedAt(master.getCreatedAt() != null ? master.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
 
@@ -97,6 +99,7 @@ public class MasterJpaMapper {
         entity.setAvatar(profile.getAvatar());
         entity.setCreatedAt(profile.getCreatedAt() != null ? profile.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
+
         return entity;
     }
 
@@ -146,6 +149,7 @@ public class MasterJpaMapper {
         entity.setToken(log.getToken());
         entity.setCreatedAt(log.getCreatedAt() != null ? log.getCreatedAt() : LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
+
         return entity;
     }
 

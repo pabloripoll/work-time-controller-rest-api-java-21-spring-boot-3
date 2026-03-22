@@ -21,6 +21,7 @@ public class MasterDtoMapper {
                 master.getUser().getId(),
                 master.isActive(),
                 master.isBanned(),
+                master.isSupermaster(),
                 master.getCreatedAt(),
                 master.getUpdatedAt(),
                 profileDto

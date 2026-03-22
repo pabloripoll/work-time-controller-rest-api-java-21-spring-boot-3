@@ -9,6 +9,7 @@ public class Master {
     private User user;
     private boolean isActive;
     private boolean isBanned;
+    private boolean isSupermaster;
     private MasterProfile profile;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -27,6 +28,7 @@ public class Master {
         master.user      = user;
         master.isActive  = false;
         master.isBanned  = false;
+        master.isSupermaster = false;
         master.createdAt = LocalDateTime.now();
         master.updatedAt = LocalDateTime.now();
 
@@ -42,6 +44,7 @@ public class Master {
         User user,
         boolean isActive,
         boolean isBanned,
+        boolean isSupermaster,
         MasterProfile profile,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -51,6 +54,7 @@ public class Master {
         master.user      = user;
         master.isActive  = isActive;
         master.isBanned  = isBanned;
+        master.isSupermaster = isSupermaster;
         master.profile   = profile;
         master.createdAt = createdAt;
         master.updatedAt = updatedAt;
@@ -81,6 +85,16 @@ public class Master {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void applyIsSupermaster() {
+        this.isSupermaster  = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void revokeIsSupermaster() {
+        this.isSupermaster  = false;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     // ------------------------------------------------------------------ //
     // Getters — no raw setters on business state (use methods above)
     // ------------------------------------------------------------------ //
@@ -93,6 +107,8 @@ public class Master {
     public boolean isActive()         { return isActive; }
 
     public boolean isBanned()         { return isBanned; }
+
+    public boolean isSupermaster()    { return isSupermaster; }
 
     public MasterProfile getProfile() { return profile; }
 

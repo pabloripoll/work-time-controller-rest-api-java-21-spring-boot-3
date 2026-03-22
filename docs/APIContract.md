@@ -29,8 +29,11 @@ ROLE_MASTER  PATCH   /api/v1/master/account/settings/profile      #-> Updates it
 ROLE_MASTER  PATCH   /api/v1/master/account/settings/password     #-> Updates its password (old_password and retyped_new_password required)
 ROLE_MASTER  GET     /api/v1/master/users/masters                 #-> Lists only ROLE_MASTER users
 ROLE_MASTER  POST    /api/v1/master/users/masters                 #-> Creates user master (ROLE_MASTER)
-ROLE_MASTER  PATCH   /api/v1/master/users/masters/{id}/settings/profile     #-> Updates its own profile except passwords
-ROLE_MASTER  PATCH   /api/v1/master/users/masters/{id}/settings/password    #-> Updates its password (old_password and retyped_new_password required)
+ROLE_MASTER  DELETE  /api/v1/master/users/masters/{id}            #-> Deletes user master (cannot delete itself)
+ROLE_MASTER  PATCH   /api/v1/master/users/masters/{id}/settings/profile     #-> Updates another master profile except if is supermaster user
+ROLE_MASTER  PATCH   /api/v1/master/users/masters/{id}/settings/password    #-> Updates manother master password except if is supermaster user
+ROLE_MASTER  POST    /api/v1/master/users/masters/{id}/supermaster/apply    #->
+ROLE_MASTER  POST    /api/v1/master/users/masters/{id}/supermaster/revoke   #->
 ROLE_MASTER  GET     /api/v1/master/users/admins                            #-> Lists only ROLE_ADMIN users
 ROLE_MASTER  GET     /api/v1/master/users/employees                         #-> Lists of employed users ROLE_EMPLOYEE
 ROLE_MASTER  PUT     /api/v1/master/users/employees/{id}/role-admin/apply   #-> Sets employee as admin (*)
@@ -42,18 +45,20 @@ ROLE_ADMIN  GET     /api/v1/admin/account/profile               #-> Reads its ow
 ROLE_ADMIN  PATCH   /api/v1/admin/account/settings/profile      #-> Updates its own profile except passwords
 ROLE_ADMIN  PATCH   /api/v1/admin/account/settings/password     #-> Updates its password (old_password and retyped_new_password required)
 
-ROLE_ADMIN  GET     /api/v1/admin/users/admins                            #-> Lists only ROLE_ADMIN users
-ROLE_ADMIN  POST    /api/v1/admin/users/admins                            #-> Creates user admin (ROLE_ADMIN)
-ROLE_ADMIN  GET     /api/v1/admin/users/admins/{id}/profile               #-> Reads specific administrator employee profile
-ROLE_ADMIN  PUT     /api/v1/admin/users/employees/{id}/role-admin/apply   #-> Sets employee as admin (*)
-ROLE_ADMIN  PUT     /api/v1/admin/users/employees/{id}/role-admin/revoke  #-> Removes employee as admin but set admin user as banned
+ROLE_ADMIN  GET     /api/v1/admin/users/admins                      #-> Lists only ROLE_ADMIN users
+ROLE_ADMIN  POST    /api/v1/admin/users/admins                      #-> Creates user admin (ROLE_ADMIN)
+ROLE_ADMIN  GET     /api/v1/admin/users/admins/{admin_id}/profile   #-> Reads specific administrator employee profile
+ROLE_ADMIN  POST    /api/v1/admin/users/admins/{admin_id}/superadmin/apply    #->
+ROLE_ADMIN  POST    /api/v1/admin/users/admins/{admin_id}/superadmin/revoke   #->
 
 ROLE_ADMIN  GET     /api/v1/admin/users/employees                         #-> Lists of employed users ROLE_EMPLOYEE
 ROLE_ADMIN  POST    /api/v1/admin/users/employees                         #-> Creates employee users ROLE_EMPLOYEE (employees/workers)
-ROLE_ADMIN  DELETE  /api/v1/admin/users/employees/{id}                    #-> Removes specific employee user by id
-ROLE_ADMIN  GET     /api/v1/admin/users/employees/{id}/profile            #-> Reads specific employee profile
-ROLE_ADMIN  PATCH   /api/v1/admin/users/employees/{id}/settings/profile   #-> Updates employee user by id profile except password
-ROLE_ADMIN  PATCH   /api/v1/admin/users/employees/{id}/settings/password  #-> Updates employee user by id password (retyped_new_password required)
+ROLE_ADMIN  DELETE  /api/v1/admin/users/employees/{employee_id}                    #-> Removes specific employee user by id
+ROLE_ADMIN  GET     /api/v1/admin/users/employees/{employee_id}/profile            #-> Reads specific employee profile
+ROLE_ADMIN  PATCH   /api/v1/admin/users/employees/{employee_id}/settings/profile   #-> Updates employee user by id profile except password
+ROLE_ADMIN  PATCH   /api/v1/admin/users/employees/{employee_id}/settings/password  #-> Updates employee user by id password (retyped_new_password required)
+ROLE_ADMIN  PUT     /api/v1/admin/users/employees/{employee_id}/role-admin/apply   #-> Sets employee as admin (*)
+ROLE_ADMIN  PUT     /api/v1/admin/users/employees/{employee_id}/role-admin/revoke  #-> Removes employee as admin but set admin user as banned
 
 ROLE_ADMIN  GET     /api/v1/admin/employees/contracts                   #-> List of employee contracts by date
 ROLE_ADMIN  GET     /api/v1/admin/employees/contracts/filters           #-> List of contract types

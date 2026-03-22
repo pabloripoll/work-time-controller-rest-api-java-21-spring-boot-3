@@ -80,7 +80,7 @@ class MasterAccountControllerTest {
 
         // --- Stub DTO ---
         var profileDto = new MasterProfileDto(1L, "other", null);
-        masterDto = new MasterDto(1L, 1L, true, false, now, now, profileDto);
+        masterDto = new MasterDto(1L, 1L, true, false, false, now, now, profileDto);
     }
 
     @Test
