@@ -5,25 +5,26 @@ import api.dev.domain.shared.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DeleteMasterAvatarUseCase {
+public class UploadMasterAvatarUseCase {
 
     private final MasterRepository masterRepository;
 
-    public DeleteMasterAvatarUseCase(MasterRepository masterRepository) {
+    public UploadMasterAvatarUseCase(MasterRepository masterRepository) {
         this.masterRepository = masterRepository;
     }
 
-    public void execute(DeleteMasterAvatarCommand command) {
+    public String execute(UploadMasterAvatarCommand command) {
         var master = masterRepository.findById(command.masterId())
-                .orElseThrow(() -> new EntityNotFoundException("Master not found: " + command.masterId()));
+                .orElseThrow(() -> new EntityNotFoundException("Master not found with id: " + command.masterId()));
 
         var profile = master.getProfile();
         if (profile == null) {
             throw new EntityNotFoundException("Profile not found for master: " + command.masterId());
         }
 
-        profile.removeAvatar();
-
+        profile.updateAvatar(command.avatar());
         masterRepository.save(master);
+
+        return profile.getAvatar();
     }
 }

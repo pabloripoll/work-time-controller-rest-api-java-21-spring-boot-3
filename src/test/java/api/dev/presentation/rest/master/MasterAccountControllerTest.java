@@ -2,7 +2,9 @@ package api.dev.presentation.rest.master;
 
 import api.dev.application.master.dto.MasterDto;
 import api.dev.application.master.dto.MasterProfileDto;
+import api.dev.application.master.usecase.command.DeleteMasterAvatarUseCase;
 import api.dev.application.master.usecase.command.UpdateMasterProfileUseCase;
+import api.dev.application.master.usecase.command.UploadMasterAvatarUseCase;
 import api.dev.application.master.usecase.query.GetMasterByUserIdUseCase;
 import api.dev.domain.shared.valueobject.Email;
 import api.dev.domain.user.model.entity.User;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -44,6 +47,8 @@ class MasterAccountControllerTest {
     @SpyBean  private UserDetailsServiceImpl userDetailsService;  // ← SpyBean wraps real bean
     @MockBean private GetMasterByUserIdUseCase getMasterByUserIdUseCase;
     @MockBean private UpdateMasterProfileUseCase updateProfileUseCase;
+    @MockBean private UploadMasterAvatarUseCase uploadMasterAvatarUseCase;
+    @MockBean private DeleteMasterAvatarUseCase deleteMasterAvatarUseCase;
 
     private String validMasterToken;
     private String validEmployeeToken;
@@ -125,5 +130,115 @@ class MasterAccountControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    // ------------------------------------------------------------------ //
+    // POST /account/settings/avatar
+    // ------------------------------------------------------------------ //
+
+    @Test
+    @DisplayName("POST /account/settings/avatar returns 200 with avatar URL when valid image uploaded")
+    void uploadAvatar_validImage_returns200() throws Exception {
+        when(getMasterByUserIdUseCase.execute(any())).thenReturn(masterDto);
+        when(uploadMasterAvatarUseCase.execute(any())).thenReturn("http://localhost:8080/files/images/avatars/my-photo-uuid.jpg");
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",                       // ← must match @RequestParam("file")
+                "my photo.jpg",               // original filename — slugger will sanitise it
+                "image/jpeg",
+                new byte[1024]                // 1 KB fake content
+        );
+
+        mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
+                        .file(file)
+                        .header("Authorization", "Bearer " + validMasterToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.avatar_url").value("http://localhost:8080/files/images/avatars/my-photo-uuid.jpg"));
+    }
+
+    @Test
+    @DisplayName("POST /account/settings/avatar returns 422 when file exceeds 2 MB")
+    void uploadAvatar_tooLarge_returns422() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "big.jpg",
+                "image/jpeg",
+                new byte[3 * 1024 * 1024]    // 3 MB — exceeds limit
+        );
+
+        mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
+                        .file(file)
+                        .header("Authorization", "Bearer " + validMasterToken))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.error").value("validation_failed"));
+    }
+
+    @Test
+    @DisplayName("POST /account/settings/avatar returns 422 when file type is not allowed")
+    void uploadAvatar_invalidType_returns422() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "document.pdf",
+                "application/pdf",            // not allowed
+                new byte[512]
+        );
+
+        mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
+                        .file(file)
+                        .header("Authorization", "Bearer " + validMasterToken))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.error").value("validation_failed"));
+    }
+
+    @Test
+    @DisplayName("POST /account/settings/avatar returns 401 when no token provided")
+    void uploadAvatar_noToken_returns401() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "photo.jpg", "image/jpeg", new byte[512]
+        );
+
+        mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
+                        .file(file))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("unauthenticated"));
+    }
+
+    @Test
+    @DisplayName("POST /account/settings/avatar returns 403 when authenticated as EMPLOYEE")
+    void uploadAvatar_wrongRole_returns403() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "photo.jpg", "image/jpeg", new byte[512]
+        );
+
+        mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
+                        .file(file)
+                        .header("Authorization", "Bearer " + validEmployeeToken))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("access_denied"));
+    }
+
+    // ------------------------------------------------------------------ //
+    // DELETE /account/settings/avatar
+    // ------------------------------------------------------------------ //
+
+    @Test
+    @DisplayName("DELETE /account/settings/avatar returns 200 when authenticated as MASTER")
+    void deleteAvatar_authenticated_returns200() throws Exception {
+        when(getMasterByUserIdUseCase.execute(any())).thenReturn(masterDto);
+
+        mockMvc.perform(delete("/api/v1/master/account/settings/avatar")
+                        .header("Authorization", "Bearer " + validMasterToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.message").value("Avatar removed"));
+    }
+
+    @Test
+    @DisplayName("DELETE /account/settings/avatar returns 401 when no token provided")
+    void deleteAvatar_noToken_returns401() throws Exception {
+        mockMvc.perform(delete("/api/v1/master/account/settings/avatar"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("unauthenticated"));
     }
 }

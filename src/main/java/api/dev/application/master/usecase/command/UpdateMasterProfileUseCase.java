@@ -25,9 +25,6 @@ public class UpdateMasterProfileUseCase {
         if (command.nickname() != null) {
             profile.updateNickname(command.nickname());
         }
-        if (command.avatar() != null) {
-            profile.updateAvatar(command.avatar());
-        }
 
         masterRepository.save(master);
     }

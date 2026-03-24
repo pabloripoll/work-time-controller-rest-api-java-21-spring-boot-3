@@ -307,8 +307,20 @@ Testing
 | JwtAuthenticationFilterTest	   | Filter passes/blocks correctly, sets SecurityContext               |
 | MasterAuthControllerTest         | Full HTTP login flow — success, wrong password, unknown email      |
 | MasterAccountControllerTest	   | Role guard (401/403), authenticated profile read/update            |
+<br>
 
+## Storage
 
+Functional/MockMvc and not E2E for files storage:
+
+| Concern                           | MockMvc (functional)	        | E2E                           |
+| --------------------------------- | ----------------------------- | ----------------------------- |
+| ImageUploadValidator logic	    | tested via 422 cases          | But slow                      |
+| File actually written to disk	    | mocked — intentional	        | But needs cleanup             |
+| Auth / role enforcement	        | 401 + 403 cases	            | But needs real DB             |
+| Speed	                            | Fast	                        | Slow                          |
+
+The actual file writing (AvatarStorageLocalService) is a candidate for a separate focused unit test that just calls store() directly with a temp directory — no Spring context needed.
 
 <!-- FOOTER -->
 <br>

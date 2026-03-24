@@ -1,6 +1,6 @@
 package api.dev.application.master.usecase.command;
 
-public record UpdateMasterProfileCommand(
+public record UploadMasterAvatarCommand(
         Long masterId,
-        String nickname
+        String avatar
 ) {}
