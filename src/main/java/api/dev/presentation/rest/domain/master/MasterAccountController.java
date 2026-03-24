@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
-//import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -86,28 +85,6 @@ public class MasterAccountController {
     ) {
         return ResponseEntity.ok(Map.of("status", "success", "message", "Password updated"));
     }
-
-    /* @PostMapping(value = "/account/settings/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadAvatar(
-        @AuthenticationPrincipal AuthenticatedUser authUser,
-        @RequestParam("file") MultipartFile file
-    ) {
-        ImageUploadValidator.validate(file);  // ← throws ValidationException → caught by GlobalExceptionHandler → 422
-
-        var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
-
-        String avatarUrl = "/uploads/avatars/" + file.getOriginalFilename();
-
-        String savedUrl = uploadMasterAvatarUseCase.execute(new UploadMasterAvatarCommand(
-            master.id(),
-            avatarUrl
-        ));
-
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "data",   Map.of("avatar_url", savedUrl)
-        ));
-    } */
 
     @PostMapping(value = "/account/settings/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadAvatar(
