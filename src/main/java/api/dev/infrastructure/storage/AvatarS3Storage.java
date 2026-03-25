@@ -1,8 +1,8 @@
-package api.dev.infrastructure.upload;
+package api.dev.infrastructure.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class AvatarStorageS3Service implements AvatarStorageService {
+public class AvatarS3Storage implements StorageService {
 
     @Override
     public String store(MultipartFile file, String filename) {

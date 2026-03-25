@@ -1,4 +1,4 @@
-package api.dev.infrastructure.upload;
+package api.dev.infrastructure.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -6,12 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class AvatarStorageLocalService implements AvatarStorageService {
+public class AvatarLocalStorage implements StorageService {
 
     private final String localPath;
     private final String baseUrl;
 
-    public AvatarStorageLocalService(String localPath, String baseUrl) {
+    public AvatarLocalStorage(String localPath, String baseUrl) {
         this.localPath = localPath;
         this.baseUrl   = baseUrl;
     }

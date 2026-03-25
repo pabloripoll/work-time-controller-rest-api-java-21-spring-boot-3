@@ -1,7 +1,7 @@
-package api.dev.infrastructure.upload;
+package api.dev.infrastructure.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface AvatarStorageService {
+public interface StorageService {
     String store(MultipartFile file, String filename);
 }

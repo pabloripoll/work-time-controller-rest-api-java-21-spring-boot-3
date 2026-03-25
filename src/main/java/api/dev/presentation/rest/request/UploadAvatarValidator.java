@@ -1,11 +1,11 @@
-package api.dev.infrastructure.upload;
+package api.dev.presentation.rest.request;
 
 import api.dev.domain.shared.exception.ValidationException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public class ImageUploadValidator {
+public class UploadAvatarValidator {
 
     private static final long   MAX_SIZE_BYTES    = 2 * 1024 * 1024; // 2 MB
     private static final List<String> ALLOWED_TYPES = List.of(

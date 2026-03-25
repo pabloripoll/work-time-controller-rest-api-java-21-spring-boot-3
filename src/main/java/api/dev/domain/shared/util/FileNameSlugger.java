@@ -1,4 +1,4 @@
-package api.dev.infrastructure.upload;
+package api.dev.domain.shared.util;
 
 import java.text.Normalizer;
 import java.util.UUID;

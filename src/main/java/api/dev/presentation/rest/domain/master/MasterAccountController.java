@@ -6,12 +6,12 @@ import api.dev.application.master.usecase.command.UploadMasterAvatarCommand;
 import api.dev.application.master.usecase.command.UploadMasterAvatarUseCase;
 import api.dev.application.master.usecase.command.DeleteMasterAvatarCommand;
 import api.dev.application.master.usecase.command.DeleteMasterAvatarUseCase;
-import api.dev.infrastructure.upload.AvatarStorageService;
 import api.dev.application.master.usecase.query.GetMasterByUserIdQuery;
 import api.dev.application.master.usecase.query.GetMasterByUserIdUseCase;
+import api.dev.domain.shared.util.FileNameSlugger;
 import api.dev.infrastructure.security.userdetails.AuthenticatedUser;
-import api.dev.infrastructure.upload.FileNameSlugger;
-import api.dev.infrastructure.upload.ImageUploadValidator;
+import api.dev.infrastructure.storage.StorageService;
+import api.dev.presentation.rest.request.UploadAvatarValidator;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,14 +28,14 @@ public class MasterAccountController {
 
     private final GetMasterByUserIdUseCase getMasterByUserIdUseCase;
     private final UpdateMasterProfileUseCase updateMasterProfileUseCase;
-    private final AvatarStorageService avatarStorageService;
+    private final StorageService avatarStorageService;
     private final UploadMasterAvatarUseCase uploadMasterAvatarUseCase;
     private final DeleteMasterAvatarUseCase deleteMasterAvatarUseCase;
 
     public MasterAccountController(
         GetMasterByUserIdUseCase getMasterByUserIdUseCase,
         UpdateMasterProfileUseCase updateMasterProfileUseCase,
-        AvatarStorageService avatarStorageService,
+        StorageService avatarStorageService,
         UploadMasterAvatarUseCase uploadMasterAvatarUseCase,
         DeleteMasterAvatarUseCase deleteMasterAvatarUseCase
     ) {
@@ -91,7 +91,7 @@ public class MasterAccountController {
         @AuthenticationPrincipal AuthenticatedUser authUser,
         @RequestParam("file") MultipartFile file
     ) {
-        ImageUploadValidator.validate(file);  // ← throws ValidationException → caught by GlobalExceptionHandler → 422
+        UploadAvatarValidator.validate(file);  // ← throws ValidationException → caught by GlobalExceptionHandler → 422
 
         var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
 

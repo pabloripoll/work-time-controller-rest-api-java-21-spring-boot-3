@@ -1,11 +1,11 @@
-package api.dev.infrastructure.upload;
+package api.dev.infrastructure.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "avatar")
-public class AvatarStorageProperties {
+public class StorageProperties {
 
     private String storage;    // "local" or "s3" or "azure"
     private String localPath;
