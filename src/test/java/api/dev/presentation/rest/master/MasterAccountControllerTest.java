@@ -24,6 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.mock.web.MockMultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -43,6 +45,7 @@ class MasterAccountControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private JwtService jwtService;
+    @Autowired private ObjectMapper objectMapper;
 
     @SpyBean  private UserDetailsServiceImpl userDetailsService;  // ← SpyBean wraps real bean
     @MockBean private GetMasterByUserIdUseCase getMasterByUserIdUseCase;
@@ -88,6 +91,10 @@ class MasterAccountControllerTest {
         masterDto = new MasterDto(1L, 1L, true, false, false, now, now, profileDto);
     }
 
+    // ------------------------------------------------------------------ //
+    // Get profile
+    // ------------------------------------------------------------------ //
+
     @Test
     @DisplayName("GET /account/profile returns 200 with profile data when authenticated as MASTER")
     void getProfile_authenticated_returns200() throws Exception {
@@ -96,8 +103,7 @@ class MasterAccountControllerTest {
         mockMvc.perform(get("/api/v1/master/account/profile")
                         .header("Authorization", "Bearer " + validMasterToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("success"))
-                .andExpect(jsonPath("$.data.nickname").value("other"));
+                .andExpect(jsonPath("$.nickname").value("other"));
     }
 
     @Test
@@ -117,6 +123,10 @@ class MasterAccountControllerTest {
                 .andExpect(jsonPath("$.error").value("access_denied"));
     }
 
+    // ------------------------------------------------------------------ //
+    // Update profile
+    // ------------------------------------------------------------------ //
+
     @Test
     @DisplayName("PATCH /account/settings/profile returns 200 when authenticated as MASTER")
     void updateProfile_authenticated_returns200() throws Exception {
@@ -129,11 +139,35 @@ class MasterAccountControllerTest {
                                 { "nickname": "newname" }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("success"));
+                .andExpect(jsonPath("$.nickname").value("other"));
     }
 
     // ------------------------------------------------------------------ //
-    // POST /account/settings/avatar
+    // User password
+    // ------------------------------------------------------------------ //
+
+    @Test
+    @DisplayName("PATCH /account/settings/password returns 201 when authenticated as MASTER")
+    void updatePassword_authenticated_returns200() throws Exception {
+        when(getMasterByUserIdUseCase.execute(any())).thenReturn(masterDto);
+
+        String payload = objectMapper.writeValueAsString(Map.of(
+            "old_password",        "hashed",
+            "new_password",        "New-Passw0rd!",
+            "confirmed_password",  "New-Passw0rd!"
+        ));
+
+        mockMvc.perform(
+            patch("/api/v1/master/account/settings/password")
+                .header("Authorization", "Bearer " + validMasterToken)
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(payload))
+            )
+            .andExpect(status().isOk());
+    }
+
+    // ------------------------------------------------------------------ //
+    // Profile avatar
     // ------------------------------------------------------------------ //
 
     @Test
@@ -144,9 +178,9 @@ class MasterAccountControllerTest {
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",                       // ← must match @RequestParam("file")
-                "my photo.jpg",               // original filename — slugger will sanitise it
+                "my photo.jpg",   // original filename — slugger will sanitise it
                 "image/jpeg",
-                new byte[1024]                // 1 KB fake content
+                new byte[1024]                     // 1 KB fake content
         );
 
         mockMvc.perform(multipart("/api/v1/master/account/settings/avatar")
@@ -217,10 +251,6 @@ class MasterAccountControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("access_denied"));
     }
-
-    // ------------------------------------------------------------------ //
-    // DELETE /account/settings/avatar
-    // ------------------------------------------------------------------ //
 
     @Test
     @DisplayName("DELETE /account/settings/avatar returns 200 when authenticated as MASTER")

@@ -61,15 +61,15 @@ public class MasterAccountController {
     ) {
         var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
 
-        Map<String, Object> data = new java.util.LinkedHashMap<>();
-        data.put("id",         master.id());
-        data.put("user_id",    master.userId());
-        data.put("nickname",   master.profile() != null ? master.profile().nickname() : null);
-        data.put("avatar",     master.profile() != null ? master.profile().avatar()   : null);
-        data.put("created_at", master.createdAt().toString());
-        data.put("updated_at", master.updatedAt().toString());
+        Map<String, Object> response = new java.util.LinkedHashMap<>();
+        response.put("id",         master.id());
+        response.put("user_id",    master.userId());
+        response.put("nickname",   master.profile() != null ? master.profile().nickname() : null);
+        response.put("avatar",     master.profile() != null ? master.profile().avatar()   : null);
+        response.put("created_at", master.createdAt().toString());
+        response.put("updated_at", master.updatedAt().toString());
 
-        return ResponseEntity.ok(Map.of("status", "success", "data", data));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/account/settings/profile")
@@ -84,7 +84,15 @@ public class MasterAccountController {
             body.get("nickname")
         ));
 
-        return ResponseEntity.ok(Map.of("status", "success", "message", "Profile updated"));
+        Map<String, Object> response = new java.util.LinkedHashMap<>();
+        response.put("id",         master.id());
+        response.put("user_id",    master.userId());
+        response.put("nickname",   master.profile() != null ? master.profile().nickname() : null);
+        response.put("avatar",     master.profile() != null ? master.profile().avatar()   : null);
+        response.put("created_at", master.createdAt().toString());
+        response.put("updated_at", master.updatedAt().toString());
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/account/settings/password")
@@ -94,7 +102,7 @@ public class MasterAccountController {
     ) {
         String oldPassword    = body.get("old_password");
         String newPassword    = body.get("new_password");
-        String repeatPassword = body.get("repeat_password");
+        String confirmedPassword = body.get("confirmed_password");
 
         Map<String, String> errors = new LinkedHashMap<>();
 
@@ -112,10 +120,10 @@ public class MasterAccountController {
             }
         }
 
-        if (repeatPassword == null || repeatPassword.isBlank()) {
-            errors.put("repeat_password", "Password confirmation is required");
-        } else if (newPassword != null && !newPassword.equals(repeatPassword)) {
-            errors.put("repeat_password", "Passwords do not match");
+        if (confirmedPassword == null || confirmedPassword.isBlank()) {
+            errors.put("confirmed_password", "Password confirmation is required");
+        } else if (newPassword != null && !newPassword.equals(confirmedPassword)) {
+            errors.put("confirmed_password", "Passwords do not match");
         }
 
         if (!errors.isEmpty()) {
@@ -127,7 +135,10 @@ public class MasterAccountController {
             newPassword
         ));
 
-        return ResponseEntity.ok(Map.of("status", "success", "message", "Password updated"));
+        Map<String, Object> response = new java.util.LinkedHashMap<>();
+        response.put("message", "User password updated.");
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/account/settings/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

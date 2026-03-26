@@ -290,10 +290,10 @@ Testing
 /var/www/ $ mvn test -Dsurefire.reportFormat=plain
 
 # Run test script
-/var/www $ mvn test -Dtest=MasterAccountControllerTest -Dspring.profiles.active=test
+/var/www $ mvn test -Dspring.profiles.active=test -Dtest=MasterAccountControllerTest
 
 # Run test script method
-/var/www $ mvn test -Dtest=MasterAccountControllerTest#getProfile_authenticated_returns200 -Dspring.profiles.active=test
+/var/www $ mvn test -Dspring.profiles.active=test -Dtest=MasterAccountControllerTest#getProfile_authenticated_returns200
 ```
 
 ### What each test layer validates
