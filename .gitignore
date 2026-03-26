@@ -93,3 +93,5 @@ Icon?
 
 # Custom
 /vault
+/src/main/resources/static/files/images/avatars/*
+!/src/main/resources/static/files/images/avatars/.gitkeep
