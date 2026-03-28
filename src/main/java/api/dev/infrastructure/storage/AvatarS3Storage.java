@@ -8,4 +8,9 @@ public class AvatarS3Storage implements StorageService {
     public String store(MultipartFile file, String filename) {
         throw new UnsupportedOperationException("S3 storage not yet implemented");
     }
+
+    @Override
+    public void delete(String fileUrl) {
+        throw new UnsupportedOperationException("S3 delete not yet implemented");
+    }
 }

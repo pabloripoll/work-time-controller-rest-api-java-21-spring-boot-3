@@ -29,4 +29,16 @@ public class AvatarLocalStorage implements StorageService {
             throw new RuntimeException("Failed to store avatar locally", e);
         }
     }
+
+    @Override
+    public void delete(String fileUrl) {
+        try {
+            String filename = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+            Path   filePath = Paths.get(localPath).resolve(filename);
+            Files.deleteIfExists(filePath);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete avatar file: " + fileUrl, e);
+        }
+    }
 }

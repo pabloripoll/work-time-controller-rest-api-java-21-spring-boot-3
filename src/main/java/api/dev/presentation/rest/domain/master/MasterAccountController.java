@@ -35,7 +35,7 @@ public class MasterAccountController {
     private final GetMasterByUserIdUseCase getMasterByUserIdUseCase;
     private final UpdateMasterProfileUseCase updateMasterProfileUseCase;
     private final UpdateUserPasswordUseCase updateUserPasswordUseCase;
-    private final StorageService avatarStorageService;
+    private final StorageService storageService;
     private final UploadMasterAvatarUseCase uploadMasterAvatarUseCase;
     private final DeleteMasterAvatarUseCase deleteMasterAvatarUseCase;
 
@@ -43,14 +43,14 @@ public class MasterAccountController {
         GetMasterByUserIdUseCase getMasterByUserIdUseCase,
         UpdateMasterProfileUseCase updateMasterProfileUseCase,
         UpdateUserPasswordUseCase updateUserPasswordUseCase,
-        StorageService avatarStorageService,
+        StorageService storageService,
         UploadMasterAvatarUseCase uploadMasterAvatarUseCase,
         DeleteMasterAvatarUseCase deleteMasterAvatarUseCase
     ) {
         this.getMasterByUserIdUseCase = getMasterByUserIdUseCase;
         this.updateMasterProfileUseCase = updateMasterProfileUseCase;
         this.updateUserPasswordUseCase = updateUserPasswordUseCase;
-        this.avatarStorageService = avatarStorageService;
+        this.storageService = storageService;
         this.uploadMasterAvatarUseCase = uploadMasterAvatarUseCase;
         this.deleteMasterAvatarUseCase = deleteMasterAvatarUseCase;
     }
@@ -146,20 +146,26 @@ public class MasterAccountController {
         @AuthenticationPrincipal AuthenticatedUser authUser,
         @RequestParam("file") MultipartFile file
     ) {
-        UploadAvatarValidator.validate(file);  // ← throws ValidationException → caught by GlobalExceptionHandler → 422
+        UploadAvatarValidator.validate(file);
+        String newAvatarFilename = FileNameSlugger.slug(file.getOriginalFilename());
 
-        var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(authUser.getDomainUser().getId()));
+        var userId = authUser.getDomainUser().getId();
+        var master = getMasterByUserIdUseCase.execute(new GetMasterByUserIdQuery(userId));
+        var masterProfile = master.profile();
+        String legacyAvatarLink = masterProfile.avatar();
 
-        String filename  = FileNameSlugger.slug(file.getOriginalFilename());
-        String avatarUrl = avatarStorageService.store(file, filename);
+        String newAvatarLink = storageService.store(file, newAvatarFilename);
+        if (newAvatarLink == null) {
+            //throw exception that avatar couldn't be uploaded
+        }
 
-        String savedUrl = uploadMasterAvatarUseCase.execute(
-                new UploadMasterAvatarCommand(master.id(), avatarUrl));
+        if (legacyAvatarLink != null) {
+            deleteMasterAvatarUseCase.execute(new DeleteMasterAvatarCommand(master.id()));
+        }
 
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "data",   Map.of("avatar_url", savedUrl)
-        ));
+        String newProfileAvatarLink = uploadMasterAvatarUseCase.execute(new UploadMasterAvatarCommand(master.id(), newAvatarLink));
+
+        return ResponseEntity.ok(Map.of("avatar", newProfileAvatarLink));
     }
 
     @DeleteMapping("/account/settings/avatar")
@@ -170,6 +176,10 @@ public class MasterAccountController {
 
         deleteMasterAvatarUseCase.execute(new DeleteMasterAvatarCommand(master.id()));
 
-        return ResponseEntity.ok(Map.of("status", "success", "message", "Avatar removed"));
+        Map<String, Object> response = new java.util.LinkedHashMap<>();
+        response.put("auth_user", authUser);
+        response.put("message", "Profile avatar image has been removed.");
+
+        return ResponseEntity.ok(response);
     }
 }

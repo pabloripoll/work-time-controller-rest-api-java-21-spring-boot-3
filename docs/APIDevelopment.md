@@ -198,6 +198,58 @@ A dedicated exec profile that runs a standalone main() in a separate process —
 ```
 <br><br>
 
+## Developing features
+
+Since there is spring-boot-devtools in your pom.xml:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <scope>runtime</scope>
+    <optional>true</optional>
+</dependency>
+```
+
+You should not need to restart manually. DevTools watches for file changes and triggers an automatic restart when it detects them.
+
+However there are cases where a manual restart is still needed:
+
+| Change type	                    |    Auto-restart	            | Manual restart needed          |
+| --------------------------------- | ----------------------------- | ------------------------------ |
+| Controller / service logic	    | ✅	                           | ❌                             |
+| application.properties values	    | ✅	                           | ❌                             |
+| New @Bean definition	            | ✅	                           | ❌                             |
+| pom.xml dependency added	        | ❌	                           | ✅                             |
+| .env file changes	                | ❌	                           | ✅                             |
+| Static resources (HTML/CSS/JS)	| ✅ live reload	               | ❌                             |
+| Database schema / Liquibase	    | ❌	                           | ✅                             |
+
+So for your case — if you only changed Java files — DevTools should have picked it up automatically. If changes are not reflecting, the quickest check is to stop Supervisor:
+
+```bash
+# stop supervisor service
+$ supervisorctl stop jave-dev
+# run manually
+$ mvn spring-boot:run
+# after above command, if neccessary
+$ mvn compile
+```
+
+Quickest check — what command starts your app:
+```bash
+# see what is running inside container
+$ ps aux | grep java
+```
+
+| Startup command	                | How to apply changes                              |
+| --------------------------------- | ------------------------------------------------- |
+| mvn spring-boot:run	            | Ctrl+C → mvn spring-boot:run                      |
+| java -jar target/*.jar	        | mvn package -DskipTests → restart                 |
+| mvn compile + DevTools	        | mvn compile → DevTools restarts automatically     |
+
+Stop and re-run it — it also picks up `.env` and `application.properties` changes at the same time, which DevTools would miss anyway.
+<br><br>
+
 ## Create the Application / REST API
 
 Access into container to create the Application JAR file
