@@ -2,6 +2,7 @@ package api.dev.domain.user.model.entity;
 
 import api.dev.domain.shared.valueobject.Email;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class User {
 
@@ -107,6 +108,7 @@ public class User {
 
     public Email getEmail() { return email; }
 
+    @JsonIgnore
     public String getPassword() { return password; }
 
     public UserRole getRole() { return role; }

@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Wraps the domain User as a Spring Security UserDetails.
@@ -22,6 +24,7 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     /** Access the domain User from a controller */
+    @JsonProperty("user")
     public User getDomainUser() {
         return user;
     }
@@ -32,10 +35,22 @@ public class AuthenticatedUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
-    @Override public String getPassword()                       { return user.getPassword(); }
-    @Override public String getUsername()                       { return user.getEmail().value(); }
-    @Override public boolean isAccountNonExpired()              { return true; }
-    @Override public boolean isAccountNonLocked()               { return !user.isMaster() || true; }
-    @Override public boolean isCredentialsNonExpired()          { return true; }
-    @Override public boolean isEnabled()                        { return !user.isDeleted(); }
+    @Override
+    @JsonIgnore
+    public String getPassword() { return user.getPassword(); }
+
+    @Override
+    public String getUsername() { return user.getEmail().value(); }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return !user.isMaster() || true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return !user.isDeleted(); }
 }

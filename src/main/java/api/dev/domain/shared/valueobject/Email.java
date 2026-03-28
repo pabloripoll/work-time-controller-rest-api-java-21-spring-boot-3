@@ -1,10 +1,12 @@
 package api.dev.domain.shared.valueobject;
 
 import api.dev.domain.shared.exception.DomainException;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.regex.Pattern;
 
 // The "record" keyword automatically creates private final 'value',
 // plus equals(), hashCode(), and toString()!
+@JsonSerialize(using = EmailSerializer.class)
 public record Email(String value) {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,15}$");
@@ -16,7 +18,6 @@ public record Email(String value) {
         }
 
         value = value.trim().toLowerCase();
-
         if (!EMAIL_PATTERN.matcher(value).matches()) {
             throw new DomainException("Invalid email format: " + value);
         }
