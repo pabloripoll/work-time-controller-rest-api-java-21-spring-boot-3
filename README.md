@@ -14,11 +14,12 @@ This repository contains a basic example of a RESTful API service built with **S
 
 ## Project Documentation Index
 
-- [API Structure](./docs/APIStructure.md)
-- [API Development](./docs/APIDevelopment.md)
-- [API Contract](./docs/APIContract.md)
-- [API Auth](./docs/APIAuth.md)
-- [Database Schema](./docs/DatabaseSchema.md)
+- [Project Objetives](./docs/Project-Objetives.md)
+- [API Structure](./docs/API-Structure.md)
+- [API Development](./docs/API-Development.md)
+- [API Contract](./docs/API-Contract.md)
+- [API Auth](./docs/API-Auth.md)
+- [Database Schema](./docs/DB-Schema.md)
 <br>
 
 ## Contributing

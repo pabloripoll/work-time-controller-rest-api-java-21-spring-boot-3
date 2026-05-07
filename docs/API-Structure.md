@@ -2,7 +2,7 @@
     <img src="./images/pr-banner-long.png">
 </div>
 
-# WORKTIME CONTROLLER - JAVA SPRING BOOT 3
+# WORKTIME CONTROLLER
 
 - [/README.md](../README.md)
 <br><br>
