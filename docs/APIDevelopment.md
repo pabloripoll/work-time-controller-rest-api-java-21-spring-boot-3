@@ -374,6 +374,108 @@ Functional/MockMvc and not E2E for files storage:
 
 The actual file writing (AvatarStorageLocalService) is a candidate for a separate focused unit test that just calls store() directly with a temp directory — no Spring context needed.
 
+## Overview
+
+Follow platforms repository configurations
+
+Set the containers environment values and start them up
+```bash
+$ make db-set
+$ make apirest-set
+
+$ make db-set
+$ make apirest-create
+```
+
+Access into container. Project is located into `/var/www` directory
+```bash
+$ make apirest-ssh
+
+/var/www $
+```
+
+First start up or re-install dependencies
+```bash
+/var/www $ mvn -U clean package
+```
+
+Start REST API
+```bash
+/var/www $ mvn spring-boot:run
+```
+
+Tests
+```bash
+/var/www $ mvn -U clean test
+```
+
+### Application
+```bash
+# Run the application (development)
+mvn spring-boot:run
+
+# Build the JAR
+/var/www $ mvn clean package -DskipTests
+
+# Run the JAR
+/var/www $ java -jar target/api-springboot-0.0.1-SNAPSHOT.jar
+```
+
+### Tests
+```bash
+# Run all tests
+/var/www $ mvn test
+
+# Run a specific test class
+/var/www $ mvn test -Dtest=MasterAuthControllerTest
+
+# Run a specific test method
+/var/www $ mvn test -Dtest=MasterAuthControllerTest#methodName
+
+# Run tests matching a pattern
+/var/www $ mvn test -Dtest="Master*"
+
+# Skip tests during build
+/var/www $ mvn clean package -DskipTests
+```
+
+### Liquibase Migrations
+```bash
+# Apply pending migrations (uses src/main/resources/liquibase.properties)
+/var/www $ mvn liquibase:update
+
+# Check pending changesets (dry run / status)
+/var/www $ mvn liquibase:status
+
+# Rollback last N changesets
+/var/www $ mvn liquibase:rollback -Dliquibase.rollbackCount=1
+
+# Generate a diff between DB and changelog
+/var/www $ mvn liquibase:diff
+
+# Validate the changelog
+/var/www $ mvn liquibase:validate
+```
+
+### Database Seeder
+```bash
+# Run the seeder (uses the "seed" Maven profile → SeederCli main class)
+/var/www $ mvn exec:java -Pseed
+```
+
+### Useful Combos
+```bash
+# Clean build + migrate + run
+/var/www $ mvn clean package -DskipTests && mvn liquibase:update && mvn spring-boot:run
+
+# Full cycle: clean, test, package
+/var/www $ mvn clean test package
+
+# Run with a specific Spring profile
+/var/www $ mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+<br><br>
+
 <!-- FOOTER -->
 <br>
 
